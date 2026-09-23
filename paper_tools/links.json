@@ -232,73 +232,83 @@
     },
     {
       "kind": "Equation",
-      "label": "eq:norm-inner-path",
+      "label": "eq:stretching-convex",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.PairKernelJet",
-        "decl": "eq_norm_inner_path"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "studentPairEnergy_convex"
       },
-      "scope": "Generalized: Both norm-square and inner-product path polynomials for arbitrary displacements and real masses; normal orthogonality gives the displayed specialization."
+      "scope": "Exact: the student second moment along the normal stretching is a convex function of the stretching parameter on all of ℝ, from the pointwise convexity of the squared feature and integrability."
     },
     {
       "kind": "Equation",
-      "label": "eq:norm-correlation-rates",
+      "label": "eq:midpoint-convexity",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.PairKernelJet",
-        "decl": "eq_norm_correlation_rates"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "abs_midpoint"
       },
-      "scope": "Generalized: Actual derivatives of the norm product and normalized correlation along unit affine paths; the individual norm clause is supplied by the companion."
+      "scope": "Scalar form: |u - v| ≤ (|u| + |u - 2v|)/2 for the centered feature, applied termwise inside the proof of eq:normal-stretching; the strict version is abs_midpoint_strict."
     },
     {
       "kind": "Equation",
-      "label": "eq:norm-correlation-rates",
+      "label": "eq:reflection-invariance",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.PairKernelJet",
-        "decl": "norm_path_jet"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "second_moment_reflect"
       },
-      "scope": "Generalized: Actual first and second derivatives of the individual norm for arbitrary displacement. The manuscript normal-shear and mass-scaled clauses follow by the stated specialization."
+      "scope": "Exact: reflecting every generator across the teacher span leaves the Gaussian student second moment unchanged, since eq:second-moment-pair depends only on norms and inner products."
     },
     {
       "kind": "Equation",
-      "label": "eq:pair-term-derivative",
+      "label": "eq:normal-stretching",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
-        "decl": "pair_path_jet"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "second_moment_projected_lt"
       },
-      "scope": "Generalized: Actual first and second path derivatives for the common linear displacement used by normal shear, including diagonal and antipodal endpoint correlations. This is not the entire intermediate printed algebraic chain."
+      "scope": "Exact: the Gaussian second moment of the projected student is strictly smaller than that of the actual student whenever an active generator has a normal component; proved by the reflection across the teacher span and the midpoint convexity of the feature, with strictness on an open set."
     },
     {
       "kind": "Equation",
-      "label": "eq:pair-term-derivative",
+      "label": "eq:stretching-secant",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.PairKernelJet",
-        "decl": "eq_pair_term_derivative"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "mixedEnergy_pos_of_active_normal"
       },
-      "scope": "Partial display: Final unweighted pair derivative formula for interior correlations and arbitrary displacement. Intermediate algebraic equalities are not conjoined; the companion covers endpoint correlations."
+      "scope": "Exact: the mixed energy, one half of the derivative of the student second moment along the normal stretching, is positive; the second moment is convex in the stretching parameter, so its derivative dominates the increase from the projected generators."
     },
     {
       "kind": "Equation",
-      "label": "eq:second-moment-derivative",
+      "label": "eq:stretching-convex",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
-        "decl": "eq_second_moment_derivative"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "plainStudentEnergy_convex"
       },
-      "scope": "Normalized reformulation: The normalized student self-pair energy derivative equals twice the mixed energy, including collisions; self-pair energy is 2 pi times the Gaussian second moment."
+      "scope": "Plain ReLU: the same convexity for the ReLU student second moment along the normal stretching."
     },
     {
       "kind": "Equation",
-      "label": "eq:mixed-term-formula",
+      "label": "eq:normal-stretching",
       "source": {
         "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
-        "decl": "eq_mixed_term_formula"
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "plain_second_moment_projected_lt"
       },
-      "scope": "Normalized reformulation: At a local minimum with unit directions and teachers in the carrier, the amplitude-normal mixed derivative equals mixed energy, using loss normalization by 2 pi and a teacher-only constant."
+      "scope": "Plain ReLU: the same strict increase for the ReLU feature, by the ReLU midpoint inequality and the reflection."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:stretching-secant",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "plain_mixed_energy_pos"
+      },
+      "scope": "Plain ReLU: the plain mixed curvature, the centered mixed energy plus the first-moment correction, is positive by the same secant bound for the ReLU student energy."
     },
     {
       "kind": "Equation",
@@ -309,6 +319,36 @@
         "decl": "eq_revival_signed"
       },
       "scope": "Specialized: Both signed revival quadratics at a dead unit row in dimension at least two, with centered coefficient 1/8 and plain coefficient 1/4; dimension one is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:zero-arc-gap-occupancy",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "ordered_count_of_double_zeros"
+      },
+      "scope": "Sorted signed lines with all positive lines double zeros: the map from negative lines to the gaps they occupy is onto; this is the occupancy behind lem:line-count and needs one positive line only."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:zero-arc-no-positive",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "zero_arc_no_positive_line"
+      },
+      "scope": "Exact, in the canonical cut with all lines in [ε, x*): a zero arc at the cut and criticality exclude every positive net line, by gap occupancy and lem:gap-sign on the gap of the last positive line."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:zero-arc-no-negative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "zero_arc_residual_zero_of_no_positive_line"
+      },
+      "scope": "Exact: without positive net lines the residual is a nonpositive combination of positive kernels, so the zero arc forces every net weight to vanish and the residual is identically zero."
     },
     {
       "kind": "Equation",
@@ -1320,16 +1360,6 @@
     },
     {
       "kind": "Equation",
-      "label": "eq:arcsin-vector-gram",
-      "source": {
-        "file": "Preliminaries.lean",
-        "namespace": "PaperLeanFormalization.GaussianSignGram",
-        "decl": "eq_arcsin_vector_gram"
-      },
-      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
-    },
-    {
-      "kind": "Equation",
       "label": "eq:plain-correction-trace",
       "source": {
         "file": "Geometry.lean",
@@ -1345,16 +1375,6 @@
         "file": "Geometry.lean",
         "namespace": "PaperLeanFormalization.PairKernelJet",
         "decl": "eq_proportional_pair_quadratic"
-      },
-      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:collinear-arcsin-sum",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.MixedEnergyPositive",
-        "decl": "eq_collinear_arcsin_sum"
       },
       "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
     },
@@ -1630,16 +1650,6 @@
     },
     {
       "kind": "Equation",
-      "label": "eq:gaussian-sign-arcsin",
-      "source": {
-        "file": "Preliminaries.lean",
-        "namespace": "PaperLeanFormalization.GaussianSignGram",
-        "decl": "gaussian_sign_pair"
-      },
-      "scope": "Exact: the Gaussian covariance of the two half-space signs is (2/pi) arcsin of the inner product, including the collinear endpoints."
-    },
-    {
-      "kind": "Equation",
       "label": "eq:jumper_function",
       "source": {
         "file": "Planar.lean",
@@ -1737,6 +1747,16 @@
         "decl": "plain_normal_curvature_zero"
       },
       "scope": "The plain-ReLU analogue of the null normal curvature, with the first-moment correction of eq:plain-correction-trace."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:comments_plain_relu",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.NormalStretching",
+        "decl": "plain_mixed_energy_pos"
+      },
+      "scope": "The plain-ReLU positivity: Step 8.3 rerun for the ReLU feature, without any separation of the students."
     },
     {
       "kind": "Equation",

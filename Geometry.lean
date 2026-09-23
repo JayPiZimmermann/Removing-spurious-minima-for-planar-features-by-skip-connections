@@ -2192,146 +2192,6 @@ theorem continuous_circle :
 
 end PaperLeanFormalization.FinitePlane
 
-namespace PaperLeanFormalization.MixedEnergyPositive
-
-open NormalTrace ConfinementTraceAssembly AmplitudeNormalVariation
-
-/-- A scalar positive-semidefinite Gram form remains nonnegative after
-contracting it with finite-dimensional vectors, coordinate by coordinate. -/
-theorem vector_gram_nonnegative {d n : ℕ} (A : Fin n → Fin n → ℝ)
-    (hPSD : ∀ a : Fin n → ℝ, 0 ≤ ∑ i, ∑ j, a i * a j * A i j)
-    (c : Fin n → ℝ) (q : Fin n → Vec d) :
-    0 ≤ ∑ i, ∑ j, c i * c j * (inner (q i) (q j) : ℝ) * A i j := by
-  have hexpand : (∑ i, ∑ j, c i * c j * (inner (q i) (q j) : ℝ) * A i j) =
-      ∑ a : Fin d, ∑ i, ∑ j, (c i * q i a) * (c j * q j a) * A i j := by
-    calc
-      _ = ∑ i, ∑ j, ∑ a : Fin d, (c i * q i a) * (c j * q j a) * A i j := by
-        apply Finset.sum_congr rfl
-        intro i _
-        apply Finset.sum_congr rfl
-        intro j _
-        change c i * c j * (∑ a : Fin d, q i a * q j a) * A i j = _
-        rw [Finset.mul_sum, Finset.sum_mul]
-        apply Finset.sum_congr rfl
-        intro a _
-        ring
-      _ = ∑ i, ∑ a : Fin d, ∑ j, (c i * q i a) * (c j * q j a) * A i j := by
-        apply Finset.sum_congr rfl
-        intro i _
-        exact Finset.sum_comm
-      _ = _ := Finset.sum_comm
-  rw [hexpand]
-  exact Finset.sum_nonneg (fun a _ => hPSD (fun i => c i * q i a))
-
-theorem unit_aligned_of_abs_inner_eq_one {d : ℕ} (x y : Vec d)
-    (hx : ‖x‖ = 1) (hy : ‖y‖ = 1) (hinner : |(inner x y : ℝ)| = 1) :
-    y = x ∨ y = -x := by
-  rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1)).mp hinner with hp | hm
-  · exact Or.inl ((inner_eq_one_iff_of_norm_one hx hy).mp hp).symm
-  · have hneg : (inner (-x) y : ℝ) = 1 := by rw [inner_neg_left, hm]; norm_num
-    exact Or.inr ((inner_eq_one_iff_of_norm_one (by simpa using hx) hy).mp hneg).symm
-
-/-- For two active directions on one projective line, their signs cancel
-between the linear normal map and the odd arcsine kernel. -/
-theorem aligned_arcsin_product {d : ℕ} (Q : Vec d →ₗ[ℝ] Vec d)
-    (x y z : Vec d) (hx : ‖x‖ = 1) (hy : y = x ∨ y = -x) (hz : z = x ∨ z = -x) :
-    (inner (Q y) (Q z) : ℝ) * arcsin (inner y z : ℝ) = ‖Q x‖^2 * (π / 2) := by
-  rcases hy with rfl | rfl <;> rcases hz with rfl | rfl <;>
-    simp only [map_neg, inner_neg_left, inner_neg_right, neg_neg,
-      real_inner_self_eq_norm_sq, hx, one_pow, Real.arcsin_one,
-      Real.arcsin_neg_one, mul_neg, neg_mul]
-
-/-- The radial half of the mixed energy is termwise nonnegative. -/
-theorem radial_energy_nonnegative {d r n : ℕ} (J : Vec r →ₗᵢ[ℝ] Vec d)
-    (c : Fin n → ℝ) (w : Fin n → Vec d) (hc : ∀ i, 0 ≤ c i) :
-    0 ≤ ∑ i, c i * ‖normalPart J (w i)‖^2 *
-      ∑ j, c j * sqrt (1 - (inner (w i) (w j) : ℝ)^2) := by
-  exact Finset.sum_nonneg (fun i _ => mul_nonneg
-    (mul_nonneg (hc i) (sq_nonneg _))
-    (Finset.sum_nonneg (fun j _ => mul_nonneg (hc j) (sqrt_nonneg _))))
-
-/-- `eq:collinear-arcsin-sum`: the complete contracted arcsine sum on one
-line is a positive square of total mass. Zero-mass rows impose no direction
-condition; the active mass and nonzero normal vector make the result strict. -/
-theorem eq_collinear_arcsin_sum {d n : ℕ} (Q : Vec d →ₗ[ℝ] Vec d)
-    (x : Vec d) (hx : ‖x‖ = 1) (c : Fin n → ℝ) (w : Fin n → Vec d)
-    (halign : ∀ j, c j ≠ 0 → w j = x ∨ w j = -x)
-    (hc : ∀ j, 0 ≤ c j) (hpos : ∃ i, 0 < c i) (hQ : Q x ≠ 0) :
-    (∑ j, ∑ k, c j * c k * (inner (Q (w j)) (Q (w k)) : ℝ) *
-      arcsin (inner (w j) (w k) : ℝ)) =
-      (π / 2) * ‖Q x‖ ^ 2 * (∑ j, c j) ^ 2 ∧
-    0 < (π / 2) * ‖Q x‖ ^ 2 * (∑ j, c j) ^ 2 := by
-  have hterm (j k : Fin n) :
-      c j * c k * (inner (Q (w j)) (Q (w k)) : ℝ) *
-        arcsin (inner (w j) (w k) : ℝ) =
-      ((π / 2) * ‖Q x‖ ^ 2) * (c j * c k) := by
-    by_cases hj : c j = 0
-    · simp [hj]
-    by_cases hk : c k = 0
-    · simp [hk]
-    rw [mul_assoc (c j * c k),
-      aligned_arcsin_product Q x (w j) (w k) hx (halign j hj) (halign k hk)]
-    ring
-  constructor
-  · simp_rw [hterm, ← Finset.mul_sum]
-    rw [← Finset.sum_mul]
-    ring
-  · have hsum : 0 < ∑ j, c j := by
-      apply Finset.sum_pos' (fun j _ => hc j)
-      obtain ⟨i, hi⟩ := hpos
-      exact ⟨i, Finset.mem_univ i, hi⟩
-    exact mul_pos (mul_pos (half_pos pi_pos)
-      (pow_pos (norm_pos_iff.mpr hQ) 2)) (pow_pos hsum 2)
-
-/-- A positive displaced mass makes the exact mixed energy strictly
-positive, without deleting zero masses or merging coincident directions. -/
-theorem mixedEnergy_pos_of_active_normal {d r n : ℕ}
-    (J : Vec r →ₗᵢ[ℝ] Vec d) (c : Fin n → ℝ) (w : Fin n → Vec d)
-    (hw : ∀ i, ‖w i‖ = 1) (hc : ∀ i, 0 ≤ c i)
-    (hPSD : ∀ a : Fin n → ℝ,
-      0 ≤ ∑ i, ∑ j, a i * a j * arcsin (inner (w i) (w j) : ℝ))
-    (i : Fin n) (hci : 0 < c i) (hQi : normalPart J (w i) ≠ 0) :
-    0 < mixedEnergy J c w := by
-  have hrad := radial_energy_nonnegative J c w hc
-  have hang := vector_gram_nonnegative (fun j k => arcsin (inner (w j) (w k) : ℝ))
-    hPSD c (fun j => normalPart J (w j))
-  have hnorm : 0 < ‖normalPart J (w i)‖^2 := pow_pos (norm_pos_iff.mpr hQi) 2
-  unfold mixedEnergy
-  by_cases hnoncollinear : ∃ j, 0 < c j ∧ |(inner (w i) (w j) : ℝ)| < 1
-  · obtain ⟨j, hcj, hij⟩ := hnoncollinear
-    have hsq : 0 < 1 - (inner (w i) (w j) : ℝ)^2 := by
-      obtain ⟨hlo, hhi⟩ := abs_lt.mp hij
-      have hprod := mul_pos (sub_pos.mpr hhi) (by linarith : 0 < 1 + (inner (w i) (w j) : ℝ))
-      nlinarith only [hprod]
-    have hinner : 0 < ∑ k, c k * sqrt (1 - (inner (w i) (w k) : ℝ)^2) := by
-      apply Finset.sum_pos' (fun k _ => mul_nonneg (hc k) (sqrt_nonneg _))
-      exact ⟨j, Finset.mem_univ j, mul_pos hcj (sqrt_pos.mpr hsq)⟩
-    have hradpos : 0 < ∑ k, c k * ‖normalPart J (w k)‖^2 *
-        ∑ j, c j * sqrt (1 - (inner (w k) (w j) : ℝ)^2) := by
-      apply Finset.sum_pos' (fun k _ => mul_nonneg
-        (mul_nonneg (hc k) (sq_nonneg _))
-        (Finset.sum_nonneg (fun j _ => mul_nonneg (hc j) (sqrt_nonneg _))))
-      exact ⟨i, Finset.mem_univ i, mul_pos (mul_pos hci hnorm) hinner⟩
-    exact add_pos_of_pos_of_nonneg hradpos hang
-  · have halign : ∀ j, 0 < c j → w j = w i ∨ w j = -w i := by
-      intro j hcj
-      apply unit_aligned_of_abs_inner_eq_one (w i) (w j) (hw i) (hw j)
-      have hle : |(inner (w i) (w j) : ℝ)| ≤ 1 := by
-        simpa only [hw, one_mul] using abs_real_inner_le_norm (w i) (w j)
-      exact le_antisymm hle (le_of_not_gt (fun hij => hnoncollinear ⟨j, hcj, hij⟩))
-    obtain ⟨heq, hpos⟩ := eq_collinear_arcsin_sum (normalMap J) (w i) (hw i) c w
-      (fun j hj => halign j (lt_of_le_of_ne (hc j) (Ne.symm hj))) hc ⟨i, hci⟩ hQi
-    have hangpos : 0 < ∑ j, ∑ k, c j * c k *
-        (inner (normalPart J (w j)) (normalPart J (w k)) : ℝ) *
-        arcsin (inner (w j) (w k) : ℝ) := by
-      change 0 < ∑ j, ∑ k, c j * c k *
-        (inner (normalMap J (w j)) (normalMap J (w k)) : ℝ) *
-        arcsin (inner (w j) (w k) : ℝ)
-      rw [heq]
-      exact hpos
-    exact add_pos_of_nonneg_of_pos hrad hangpos
-
-end PaperLeanFormalization.MixedEnergyPositive
 
 namespace PaperLeanFormalization.SecondMomentPair
 
@@ -2466,6 +2326,692 @@ theorem centered_loss_eq_variable_kernel {d n m : ℕ} (hd : 2 ≤ d)
   exact algebra _ _ _ _ h
 
 end PaperLeanFormalization.SecondMomentPair
+
+/-!
+## Normal stretching
+
+Positivity of the mixed energy without the closed-form expansion: the student
+second moment along the normal stretching `w ↦ w + t·q` is convex in `t`, and
+it is strictly larger for the actual generators than for their projections
+onto the teacher span (by convexity of the feature and the reflection across
+the span), so its derivative at the actual generators is positive.
+-/
+
+namespace PaperLeanFormalization.NormalStretching
+
+open PaperLeanFormalization MeasureTheory Filter Set
+open scoped Topology
+open NormalTrace ConfinementTraceAssembly AmplitudeNormalVariation SecondMomentPair
+open PlainConfinementVariation PairKernelJet
+
+variable {d r n : ℕ}
+
+/-- The reflection across the teacher span is self-adjoint. -/
+theorem reflect_inner (J : Vec r →ₗᵢ[ℝ] Vec d) (u z : Vec d) :
+    (inner u (z - (2:ℝ) • normalPart J z) : ℝ) =
+      inner (u - (2:ℝ) • normalPart J u) z := by
+  have h1 := normal_inner J u z
+  have h2 := normal_inner_left J u z
+  rw [inner_sub_right, inner_sub_left, real_inner_smul_right, real_inner_smul_left, h1, h2]
+
+/-- The reflection across the teacher span preserves inner products. -/
+theorem reflect_inner_reflect (J : Vec r →ₗᵢ[ℝ] Vec d) (u v : Vec d) :
+    (inner (u - (2:ℝ) • normalPart J u) (v - (2:ℝ) • normalPart J v) : ℝ) = inner u v := by
+  have h1 := normal_inner J u v
+  have h2 := normal_inner_left J u v
+  simp only [inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right]
+  rw [h1, h2, normal_inner]
+  ring
+
+theorem reflect_norm (J : Vec r →ₗᵢ[ℝ] Vec d) (u : Vec d) :
+    ‖u - (2:ℝ) • normalPart J u‖ = ‖u‖ := by
+  rw [norm_eq_sqrt_real_inner, norm_eq_sqrt_real_inner (u), reflect_inner_reflect]
+
+/-- The student square along any direction family is Gaussian integrable. -/
+theorem student_square_integrable (hd : 2 ≤ d) (c : Fin n → ℝ) (u : Fin n → Vec d) :
+    Integrable (fun x : Vec d =>
+      (∑ j, c j * (|(inner (u j) x : ℝ)| / 2)) ^ 2 * stdGaussianDensity x) := by
+  have h := Skip.centered_residual_square_integrable hd c u
+    (fun _ : Fin 0 => (0 : ℝ)) (fun _ : Fin 0 => (0 : Vec d))
+  simpa using h
+
+theorem density_pos (x : Vec d) : 0 < stdGaussianDensity x := by
+  unfold stdGaussianDensity; positivity
+
+/-- Pointwise convexity of the squared student along the stretching. -/
+theorem stretch_pointwise (c : Fin n → ℝ) (hc : ∀ i, 0 ≤ c i) (w : Fin n → Vec d)
+    (A : Vec d →ₗ[ℝ] Vec d) {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : a + b = 1)
+    (z : Vec d) :
+    (∑ j, c j * (|(inner (w j + (a * x + b * y) • A (w j)) z : ℝ)| / 2)) ^ 2 *
+        stdGaussianDensity z ≤
+      a * ((∑ j, c j * (|(inner (w j + x • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z) +
+      b * ((∑ j, c j * (|(inner (w j + y • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z) := by
+  set hx := ∑ j, c j * (|(inner (w j + x • A (w j)) z : ℝ)| / 2) with hhx
+  set hy := ∑ j, c j * (|(inner (w j + y • A (w j)) z : ℝ)| / 2) with hhy
+  set ht := ∑ j, c j * (|(inner (w j + (a * x + b * y) • A (w j)) z : ℝ)| / 2) with hht
+  have ht0 : 0 ≤ ht := Finset.sum_nonneg fun j _ => mul_nonneg (hc j) (by positivity)
+  have hle : ht ≤ a * hx + b * hy := by
+    rw [hht, hhx, hhy, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    apply Finset.sum_le_sum
+    intro j _
+    have hlin : (inner (w j + (a * x + b * y) • A (w j)) z : ℝ) =
+        a * inner (w j + x • A (w j)) z + b * inner (w j + y • A (w j)) z := by
+      simp only [inner_add_left, real_inner_smul_left]
+      have hb' : b = 1 - a := by linarith
+      subst hb'
+      ring
+    rw [hlin]
+    have habs : |a * inner (w j + x • A (w j)) z + b * inner (w j + y • A (w j)) z| ≤
+        a * |(inner (w j + x • A (w j)) z : ℝ)| + b * |(inner (w j + y • A (w j)) z : ℝ)| := by
+      calc _ ≤ |a * inner (w j + x • A (w j)) z| + |b * inner (w j + y • A (w j)) z| := abs_add _ _
+        _ = _ := by rw [abs_mul, abs_mul, abs_of_pos ha, abs_of_pos hb]
+    nlinarith [hc j, habs]
+  have hsq : ht ^ 2 ≤ a * hx ^ 2 + b * hy ^ 2 := by
+    have h1 : ht ^ 2 ≤ (a * hx + b * hy) ^ 2 := pow_le_pow_left ht0 hle 2
+    have h2 : (a * hx + b * hy) ^ 2 ≤ a * hx ^ 2 + b * hy ^ 2 := by
+      have hb' : b = 1 - a := by linarith
+      subst hb'
+      nlinarith [mul_nonneg (mul_nonneg ha.le hb.le) (sq_nonneg (hx - hy))]
+    exact h1.trans h2
+  have hρ := (density_pos z).le
+  calc ht ^ 2 * stdGaussianDensity z ≤ (a * hx ^ 2 + b * hy ^ 2) * stdGaussianDensity z :=
+        mul_le_mul_of_nonneg_right hsq hρ
+    _ = _ := by ring
+
+/-- The stretched student second moment is a convex function of the stretching. -/
+theorem studentPairEnergy_convex (hd : 2 ≤ d) (c : Fin n → ℝ) (hc : ∀ i, 0 ≤ c i)
+    (w : Fin n → Vec d) (A : Vec d →ₗ[ℝ] Vec d) :
+    ConvexOn ℝ Set.univ (studentPairEnergy c w A) := by
+  refine convexOn_iff_forall_pos.mpr ⟨convex_univ, ?_⟩
+  intro x _ y _ a b ha hb hab
+  simp only [smul_eq_mul]
+  have hint : ∀ t : ℝ, Integrable (fun z : Vec d =>
+      (∑ j, c j * (|(inner (w j + t • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z) :=
+    fun t => student_square_integrable hd c (fun j => w j + t • A (w j))
+  rw [← second_moment_on_linear_path hd c w A (a * x + b * y),
+    ← second_moment_on_linear_path hd c w A x, ← second_moment_on_linear_path hd c w A y]
+  have hsum : a * ((2 * π) * ∫ z : Vec d,
+        (∑ j, c j * (|(inner (w j + x • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z) +
+      b * ((2 * π) * ∫ z : Vec d,
+        (∑ j, c j * (|(inner (w j + y • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z) =
+      (2 * π) * ∫ z : Vec d,
+        (a * ((∑ j, c j * (|(inner (w j + x • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z) +
+         b * ((∑ j, c j * (|(inner (w j + y • A (w j)) z : ℝ)| / 2)) ^ 2 * stdGaussianDensity z)) := by
+    rw [integral_add ((hint x).const_mul a) ((hint y).const_mul b), integral_mul_left,
+      integral_mul_left]
+    ring
+  rw [hsum]
+  apply mul_le_mul_of_nonneg_left _ (by positivity)
+  apply integral_mono (hint _) (((hint x).const_mul a).add ((hint y).const_mul b))
+  intro z
+  exact stretch_pointwise c hc w A ha hb hab z
+
+/-- Elementary: the average of `|u|` and `|u - 2v|` dominates `|u - v|`. -/
+theorem abs_midpoint (u v : ℝ) : |u - v| ≤ (|u| + |u - 2 * v|) / 2 := by
+  have := abs_add u (u - 2 * v)
+  rw [show u + (u - 2 * v) = 2 * (u - v) by ring, abs_mul, abs_two] at this
+  linarith
+
+theorem abs_midpoint_strict {u v : ℝ} (h : |u - v| < |v|) :
+    |u - v| < (|u| + |u - 2 * v|) / 2 := by
+  rcases abs_cases v with ⟨hv, _⟩ | ⟨hv, _⟩ <;> rcases abs_cases (u - v) with ⟨h1, _⟩ | ⟨h1, _⟩ <;>
+    rcases abs_cases u with ⟨h2, _⟩ | ⟨h2, _⟩ <;> rcases abs_cases (u - 2 * v) with ⟨h3, _⟩ | ⟨h3, _⟩ <;>
+    linarith
+
+/-- Reflecting the normal components does not change the student second moment. -/
+theorem second_moment_reflect (hd : 2 ≤ d) (J : Vec r →ₗᵢ[ℝ] Vec d)
+    (c : Fin n → ℝ) (w : Fin n → Vec d) :
+    (∫ x : Vec d, (∑ j, c j * (|(inner (w j - (2:ℝ) • normalPart J (w j)) x : ℝ)| / 2)) ^ 2 *
+        stdGaussianDensity x) =
+      ∫ x : Vec d, (∑ j, c j * (|(inner (w j) x : ℝ)| / 2)) ^ 2 * stdGaussianDensity x := by
+  have h1 := eq_second_moment_pair hd c (fun j => w j - (2:ℝ) • normalPart J (w j))
+  have h2 := eq_second_moment_pair hd c w
+  have hπ : (2 * π : ℝ) ≠ 0 := by positivity
+  apply mul_left_cancel₀ hπ
+  rw [h1, h2]
+  apply Finset.sum_congr rfl
+  intro i _
+  apply Finset.sum_congr rfl
+  intro j _
+  rw [reflect_norm, reflect_norm, reflect_inner_reflect]
+
+/-- Normal stretching lemma: the second moment of the student is strictly
+smaller for the projected generators than for the actual ones, as soon as an
+active generator has a normal component. -/
+theorem second_moment_projected_lt (hd : 2 ≤ d) (J : Vec r →ₗᵢ[ℝ] Vec d)
+    (c : Fin n → ℝ) (w : Fin n → Vec d) (hc : ∀ i, 0 ≤ c i)
+    (i : Fin n) (hci : 0 < c i) (hQi : normalPart J (w i) ≠ 0) :
+    (∫ x : Vec d, (∑ j, c j * (|(inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ)| / 2)) ^ 2 *
+        stdGaussianDensity x) <
+      ∫ x : Vec d, (∑ j, c j * (|(inner (w j + (0:ℝ) • normalMap J (w j)) x : ℝ)| / 2)) ^ 2 *
+        stdGaussianDensity x := by
+  classical
+  -- the three students: projected, actual, reflected
+  set hP : Vec d → ℝ := fun x => ∑ j, c j * (|(inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ)| / 2)
+  set hA : Vec d → ℝ := fun x => ∑ j, c j * (|(inner (w j + (0:ℝ) • normalMap J (w j)) x : ℝ)| / 2)
+    with hAdef
+  set hB : Vec d → ℝ := fun x => ∑ j, c j * (|(inner (w j - (2:ℝ) • normalPart J (w j)) x : ℝ)| / 2)
+    with hBdef
+  show ∫ x, hP x ^ 2 * stdGaussianDensity x < ∫ x, hA x ^ 2 * stdGaussianDensity x
+  have hnormal : ∀ j x, (inner (normalMap J (w j)) x : ℝ) = inner (normalPart J (w j)) x :=
+    fun j x => rfl
+  -- the three inner products in terms of u = ⟨w_j, x⟩ and v = ⟨q_j, x⟩
+  have eP : ∀ j x, (inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ) =
+      inner (w j) x - inner (normalPart J (w j)) x := by
+    intro j x; rw [inner_add_left, real_inner_smul_left, hnormal]; ring
+  have eA : ∀ j x, (inner (w j + (0:ℝ) • normalMap J (w j)) x : ℝ) = inner (w j) x := by
+    intro j x; rw [zero_smul, add_zero]
+  have eB : ∀ j x, (inner (w j - (2:ℝ) • normalPart J (w j)) x : ℝ) =
+      inner (w j) x - 2 * inner (normalPart J (w j)) x := by
+    intro j x; rw [inner_sub_left, real_inner_smul_left]
+  have hmid : ∀ x, (hA x + hB x) / 2 =
+      ∑ j, (c j * (|(inner (w j) x : ℝ)| / 2) +
+        c j * (|(inner (w j) x : ℝ) - 2 * inner (normalPart J (w j)) x| / 2)) / 2 := by
+    intro x
+    simp only [hAdef, hBdef, eA, eB]
+    rw [← Finset.sum_div, Finset.sum_add_distrib]
+  have hterm : ∀ j x, c j * (|(inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ)| / 2) ≤
+      (c j * (|(inner (w j) x : ℝ)| / 2) +
+        c j * (|(inner (w j) x : ℝ) - 2 * inner (normalPart J (w j)) x| / 2)) / 2 := by
+    intro j x
+    rw [eP]
+    have := abs_midpoint (inner (w j) x) (inner (normalPart J (w j)) x)
+    nlinarith [hc j, this]
+  have hPle : ∀ x, hP x ≤ (hA x + hB x) / 2 := by
+    intro x
+    rw [hmid]
+    exact Finset.sum_le_sum fun j _ => hterm j x
+  have hP0 : ∀ x, 0 ≤ hP x := fun x => Finset.sum_nonneg fun j _ => mul_nonneg (hc j) (by positivity)
+  -- the pointwise gap
+  set D : Vec d → ℝ := fun x => ((hA x ^ 2 + hB x ^ 2) / 2 - hP x ^ 2) * stdGaussianDensity x
+    with hDdef
+  have hDnonneg : ∀ x, 0 ≤ D x := by
+    intro x
+    apply mul_nonneg _ (density_pos x).le
+    have h1 : hP x ^ 2 ≤ ((hA x + hB x) / 2) ^ 2 := pow_le_pow_left (hP0 x) (hPle x) 2
+    nlinarith [sq_nonneg (hA x - hB x)]
+  -- strict on an open set around the normal component of `w i`
+  set U : Set (Vec d) := {x | |(inner (w i) x : ℝ) - inner (normalPart J (w i)) x| <
+    |(inner (normalPart J (w i)) x : ℝ)|}
+  have hUopen : IsOpen U := by
+    apply isOpen_lt
+    · exact ((continuous_const.inner continuous_id).sub (continuous_const.inner continuous_id)).abs
+    · exact (continuous_const.inner continuous_id).abs
+  have hUne : U.Nonempty := by
+    refine ⟨normalPart J (w i), ?_⟩
+    show |(inner (w i) (normalPart J (w i)) : ℝ) - inner (normalPart J (w i)) (normalPart J (w i))| <
+      |(inner (normalPart J (w i)) (normalPart J (w i)) : ℝ)|
+    rw [normal_inner, sub_self, abs_zero, real_inner_self_eq_norm_sq, abs_of_nonneg (sq_nonneg _)]
+    exact pow_pos (norm_pos_iff.mpr hQi) 2
+  have hDpos : ∀ x ∈ U, 0 < D x := by
+    intro x hx
+    apply mul_pos _ (density_pos x)
+    have hstrict : hP x < (hA x + hB x) / 2 := by
+      rw [hmid]
+      refine Finset.sum_lt_sum (fun j _ => hterm j x) ⟨i, Finset.mem_univ i, ?_⟩
+      rw [eP]
+      have := abs_midpoint_strict hx
+      nlinarith [hci, this]
+    have h1 : hP x ^ 2 < ((hA x + hB x) / 2) ^ 2 := pow_lt_pow_left hstrict (hP0 x) two_ne_zero
+    nlinarith [sq_nonneg (hA x - hB x)]
+  -- integrability, in the abbreviated forms
+  have hintP : Integrable (fun x => hP x ^ 2 * stdGaussianDensity x) :=
+    student_square_integrable hd c (fun j => w j + (-1:ℝ) • normalMap J (w j))
+  have hintA : Integrable (fun x => hA x ^ 2 * stdGaussianDensity x) :=
+    student_square_integrable hd c (fun j => w j + (0:ℝ) • normalMap J (w j))
+  have hintB : Integrable (fun x => hB x ^ 2 * stdGaussianDensity x) :=
+    student_square_integrable hd c (fun j => w j - (2:ℝ) • normalPart J (w j))
+  have hintAB : Integrable (fun x => (hA x ^ 2 * stdGaussianDensity x +
+      hB x ^ 2 * stdGaussianDensity x) / 2) := (hintA.add hintB).div_const 2
+  have hDeq : ∀ x, D x = (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2 -
+      hP x ^ 2 * stdGaussianDensity x := by
+    intro x; simp only [hDdef]; ring
+  have hintD : Integrable D := by
+    have : D = fun x => (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2 -
+        hP x ^ 2 * stdGaussianDensity x := funext hDeq
+    rw [this]
+    exact hintAB.sub hintP
+  -- positivity of the integral of the gap
+  have hpos : 0 < ∫ x, D x := by
+    rw [integral_pos_iff_support_of_nonneg_ae (eventually_of_forall hDnonneg) hintD]
+    apply lt_of_lt_of_le (hUopen.measure_pos volume hUne)
+    apply measure_mono
+    intro x hx
+    exact (hDpos x hx).ne'
+  have hsplit : ∫ x, D x = ((∫ x, hA x ^ 2 * stdGaussianDensity x) +
+      ∫ x, hB x ^ 2 * stdGaussianDensity x) / 2 - ∫ x, hP x ^ 2 * stdGaussianDensity x := by
+    calc ∫ x, D x = ∫ x, ((hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2 -
+          hP x ^ 2 * stdGaussianDensity x) := integral_congr_ae (eventually_of_forall hDeq)
+      _ = (∫ x, (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2) -
+          ∫ x, hP x ^ 2 * stdGaussianDensity x := integral_sub hintAB hintP
+      _ = (∫ x, (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x)) / 2 -
+          ∫ x, hP x ^ 2 * stdGaussianDensity x := by rw [integral_div]
+      _ = _ := by rw [integral_add hintA hintB]
+  have hrefl : ∫ x, hB x ^ 2 * stdGaussianDensity x = ∫ x, hA x ^ 2 * stdGaussianDensity x := by
+    have h := second_moment_reflect hd J c w
+    simp only [hBdef, hAdef, eA]
+    exact h
+  have key : 0 < ((∫ x, hA x ^ 2 * stdGaussianDensity x) +
+      ∫ x, hB x ^ 2 * stdGaussianDensity x) / 2 - ∫ x, hP x ^ 2 * stdGaussianDensity x :=
+    hsplit ▸ hpos
+  rw [hrefl] at key
+  linarith
+
+/-- Positivity of the mixed energy from the normal-stretching lemma: the
+second moment along the stretching is convex, so its derivative at the actual
+generators dominates the increase from the projected generators. -/
+theorem mixedEnergy_pos_of_active_normal (hd : 2 ≤ d)
+    (J : Vec r →ₗᵢ[ℝ] Vec d) (c : Fin n → ℝ) (w : Fin n → Vec d)
+    (hw : ∀ i, ‖w i‖ = 1) (hc : ∀ i, 0 ≤ c i)
+    (i : Fin n) (hci : 0 < c i) (hQi : normalPart J (w i) ≠ 0) :
+    0 < mixedEnergy J c w := by
+  have hjet := student_energy_jet c w (normalMap J) hw
+  have hD : HasDerivAt (studentPairEnergy c w (normalMap J)) (2 * mixedEnergy J c w) 0 := by
+    have := hjet.first.differentiableAt.hasDerivAt
+    rwa [eq_second_moment_derivative J c w hw] at this
+  have hconv := studentPairEnergy_convex hd c hc w (normalMap J)
+  -- secant bound: g 0 - g (-1) ≤ g' 0
+  have hsecant : studentPairEnergy c w (normalMap J) 0 - studentPairEnergy c w (normalMap J) (-1) ≤
+      2 * mixedEnergy J c w := by
+    have hlim : Tendsto (slope (studentPairEnergy c w (normalMap J)) 0) (𝓝[<] 0)
+        (𝓝 (2 * mixedEnergy J c w)) :=
+      (hasDerivAt_iff_tendsto_slope.mp hD).mono_left
+        (nhdsWithin_mono 0 (fun y (hy : y ∈ Set.Iio 0) => ne_of_lt hy))
+    refine ge_of_tendsto hlim ?_
+    filter_upwards [Ioo_mem_nhdsWithin_Iio (show (0:ℝ) ∈ Set.Ioc (-1) 0 from ⟨by norm_num, le_refl 0⟩)]
+      with y hy
+    have h := hconv.secant_mono (Set.mem_univ 0) (Set.mem_univ (-1)) (Set.mem_univ y)
+      (by norm_num) (ne_of_lt hy.2) hy.1.le
+    rw [slope_def_field]
+    have hL : (studentPairEnergy c w (normalMap J) (-1) - studentPairEnergy c w (normalMap J) 0) /
+        (-1 - 0) = studentPairEnergy c w (normalMap J) 0 - studentPairEnergy c w (normalMap J) (-1) := by
+      ring
+    rw [hL] at h
+    exact h
+  -- strict increase from the projected generators
+  have hgap : studentPairEnergy c w (normalMap J) (-1) < studentPairEnergy c w (normalMap J) 0 := by
+    rw [← second_moment_on_linear_path hd c w (normalMap J) (-1),
+      ← second_moment_on_linear_path hd c w (normalMap J) 0]
+    exact mul_lt_mul_of_pos_left (second_moment_projected_lt hd J c w hc i hci hQi) (by positivity)
+  linarith
+
+/-! ### The plain ReLU feature -/
+
+/-- Positive homogeneity of the ReLU feature under normalization. -/
+theorem plain_feature_normalize (w x : Vec d) :
+    max 0 (inner w x : ℝ) = ‖w‖ * max 0 (inner (‖w‖⁻¹ • w) x : ℝ) := by
+  have h : (inner w x : ℝ) = ‖w‖ * inner (‖w‖⁻¹ • w) x := by
+    rw [← real_inner_smul_left, norm_normalize]
+  rw [h]
+  rcases le_or_lt 0 (inner (‖w‖⁻¹ • w) x : ℝ) with hnn | hneg
+  · rw [max_eq_right hnn, max_eq_right (mul_nonneg (norm_nonneg w) hnn)]
+  · rw [max_eq_left hneg.le,
+      max_eq_left (mul_nonpos_iff.mpr (Or.inl ⟨norm_nonneg w, hneg.le⟩)), mul_zero]
+
+/-- The plain two-feature moment for arbitrary raw rows. -/
+theorem raw_plain_pair_moment (hd : 2 ≤ d) (w v : Vec d) :
+    (∫ x : Vec d, max 0 (inner w x : ℝ) * max 0 (inner v x : ℝ) * stdGaussianDensity x) =
+      (1 / (2 * π)) * (‖w‖ * ‖v‖ * centeredKernel ((inner w v : ℝ) / (‖w‖ * ‖v‖)) +
+        (π / 2) * inner w v) := by
+  by_cases hw : w = 0
+  · simp [hw]
+  by_cases hv : v = 0
+  · simp [hv]
+  let u := ‖w‖⁻¹ • w
+  let z := ‖v‖⁻¹ • v
+  have hu : ‖u‖ = 1 := norm_smul_inv_norm hw
+  have hz : ‖z‖ = 1 := norm_smul_inv_norm hv
+  have hscale : (∫ x : Vec d, max 0 (inner w x : ℝ) * max 0 (inner v x : ℝ) *
+      stdGaussianDensity x) = (‖w‖ * ‖v‖) *
+      (∫ x : Vec d, max 0 (inner u x : ℝ) * max 0 (inner z x : ℝ) * stdGaussianDensity x) := by
+    rw [← integral_mul_left]
+    congr 1
+    funext x
+    rw [plain_feature_normalize w x, plain_feature_normalize v x]
+    dsimp only [u, z]
+    ring
+  rw [hscale, Preliminaries.plain_feature_pair_moment hd u z hu hz]
+  dsimp only [u, z]
+  rw [normalized_inner]
+  unfold centeredKernel
+  have hne : ‖w‖ * ‖v‖ ≠ 0 := mul_ne_zero (norm_ne_zero_iff.mpr hw) (norm_ne_zero_iff.mpr hv)
+  field_simp
+  ring
+
+/-- The literal Gaussian expectation of the squared plain student. -/
+theorem plain_second_moment_pair {ι : Type*} [Fintype ι] (hd : 2 ≤ d)
+    (c : ι → ℝ) (V : ι → Vec d) :
+    (2 * π) * (∫ x : Vec d, (∑ i, c i * max 0 (inner (V i) x : ℝ)) ^ 2 * stdGaussianDensity x) =
+      ∑ i, ∑ j, c i * c j * (‖V i‖ * ‖V j‖ * centeredKernel ((inner (V i) (V j) : ℝ) /
+        (‖V i‖ * ‖V j‖)) + (π / 2) * inner (V i) (V j)) := by
+  have h := Preliminaries.weighted_square_integral volume
+    (fun (w x : Vec d) => max 0 (inner w x : ℝ)) stdGaussianDensity c V
+    (fun w v => ‖w‖ * ‖v‖ * centeredKernel ((inner w v : ℝ) / (‖w‖ * ‖v‖)) + (π / 2) * inner w v)
+    (1 / (2 * π))
+    (fun i j => Preliminaries.gaussian_plain_pair_integrable hd (V i) (V j))
+    (fun i j => raw_plain_pair_moment hd (V i) (V j))
+  rw [h]
+  have hcancel : (2 * π) * (1 / (2 * π)) = 1 := by field_simp [Real.pi_ne_zero]
+  rw [← mul_assoc, hcancel, one_mul]
+
+/-- The plain student second moment along a generator path is the plain
+student energy with the ReLU weight `π/2`. -/
+theorem plain_second_moment_on_linear_path (hd : 2 ≤ d)
+    (c : Fin n → ℝ) (w : Fin n → Vec d) (A : Vec d →ₗ[ℝ] Vec d) (t : ℝ) :
+    (2 * π) * (∫ x : Vec d,
+      (∑ i, c i * max 0 (inner (w i + t • A (w i)) x : ℝ)) ^ 2 * stdGaussianDensity x) =
+      plainStudentEnergy (π / 2) c w A t := by
+  rw [plain_second_moment_pair hd c (fun i => w i + t • A (w i))]
+  unfold plainStudentEnergy studentPairEnergy
+  have hM : moment c w + t • A (moment c w) = ∑ i, c i • (w i + t • A (w i)) := by
+    simp only [moment, map_sum, LinearMap.map_smul, Finset.smul_sum, smul_add,
+      Finset.sum_add_distrib, smul_smul, mul_comm t]
+  have hsq : ‖∑ i, c i • (w i + t • A (w i))‖ ^ 2 =
+      ∑ i, ∑ j, c i * c j * inner (w i + t • A (w i)) (w j + t • A (w j)) := by
+    rw [← real_inner_self_eq_norm_sq, sum_inner]
+    apply Finset.sum_congr rfl
+    intro i _
+    rw [inner_sum]
+    apply Finset.sum_congr rfl
+    intro j _
+    rw [real_inner_smul_left, real_inner_smul_right]
+    ring
+  rw [hM, hsq, Finset.mul_sum, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro j _
+  unfold pairPath
+  ring
+
+theorem plain_student_square_integrable (hd : 2 ≤ d) (c : Fin n → ℝ) (u : Fin n → Vec d) :
+    Integrable (fun x : Vec d =>
+      (∑ j, c j * max 0 (inner (u j) x : ℝ)) ^ 2 * stdGaussianDensity x) := by
+  have hpair (i j : Fin n) : Integrable (fun x : Vec d =>
+      (c i * max 0 (inner (u i) x : ℝ)) * (c j * max 0 (inner (u j) x : ℝ)) *
+        stdGaussianDensity x) := by
+    convert (Preliminaries.gaussian_plain_pair_integrable hd (u i) (u j)).const_mul (c i * c j)
+      using 1
+    funext x
+    ring
+  exact Skip.finite_square_integrable volume (fun i x => c i * max 0 (inner (u i) x : ℝ))
+    stdGaussianDensity hpair
+
+theorem max_zero_eq_half (s : ℝ) : max 0 s = (s + |s|) / 2 := by
+  rcases le_or_lt 0 s with h | h
+  · rw [max_eq_right h, abs_of_nonneg h]; ring
+  · rw [max_eq_left h.le, abs_of_neg h]; ring
+
+theorem relu_convex_comb {a b u v : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    max 0 (a * u + b * v) ≤ a * max 0 u + b * max 0 v := by
+  rw [max_zero_eq_half, max_zero_eq_half, max_zero_eq_half]
+  have := abs_add (a * u) (b * v)
+  rw [abs_mul, abs_mul, abs_of_pos ha, abs_of_pos hb] at this
+  linarith
+
+theorem relu_midpoint (u v : ℝ) : max 0 (u - v) ≤ (max 0 u + max 0 (u - 2 * v)) / 2 := by
+  rw [max_zero_eq_half, max_zero_eq_half, max_zero_eq_half]
+  linarith [abs_midpoint u v]
+
+theorem relu_midpoint_strict {u v : ℝ} (h : |u - v| < |v|) :
+    max 0 (u - v) < (max 0 u + max 0 (u - 2 * v)) / 2 := by
+  rw [max_zero_eq_half, max_zero_eq_half, max_zero_eq_half]
+  linarith [abs_midpoint_strict h]
+
+/-- Pointwise convexity of the squared plain student along the stretching. -/
+theorem plain_stretch_pointwise (c : Fin n → ℝ) (hc : ∀ i, 0 ≤ c i) (w : Fin n → Vec d)
+    (A : Vec d →ₗ[ℝ] Vec d) {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : a + b = 1)
+    (z : Vec d) :
+    (∑ j, c j * max 0 (inner (w j + (a * x + b * y) • A (w j)) z : ℝ)) ^ 2 *
+        stdGaussianDensity z ≤
+      a * ((∑ j, c j * max 0 (inner (w j + x • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z) +
+      b * ((∑ j, c j * max 0 (inner (w j + y • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z) := by
+  set hx := ∑ j, c j * max 0 (inner (w j + x • A (w j)) z : ℝ) with hhx
+  set hy := ∑ j, c j * max 0 (inner (w j + y • A (w j)) z : ℝ) with hhy
+  set ht := ∑ j, c j * max 0 (inner (w j + (a * x + b * y) • A (w j)) z : ℝ) with hht
+  have ht0 : 0 ≤ ht := Finset.sum_nonneg fun j _ => mul_nonneg (hc j) (le_max_left _ _)
+  have hle : ht ≤ a * hx + b * hy := by
+    rw [hht, hhx, hhy, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    apply Finset.sum_le_sum
+    intro j _
+    have hlin : (inner (w j + (a * x + b * y) • A (w j)) z : ℝ) =
+        a * inner (w j + x • A (w j)) z + b * inner (w j + y • A (w j)) z := by
+      simp only [inner_add_left, real_inner_smul_left]
+      have hb' : b = 1 - a := by linarith
+      subst hb'
+      ring
+    rw [hlin]
+    have := relu_convex_comb (u := (inner (w j + x • A (w j)) z : ℝ))
+      (v := (inner (w j + y • A (w j)) z : ℝ)) ha hb
+    nlinarith [hc j, this]
+  have hsq : ht ^ 2 ≤ a * hx ^ 2 + b * hy ^ 2 := by
+    have h1 : ht ^ 2 ≤ (a * hx + b * hy) ^ 2 := pow_le_pow_left ht0 hle 2
+    have h2 : (a * hx + b * hy) ^ 2 ≤ a * hx ^ 2 + b * hy ^ 2 := by
+      have hb' : b = 1 - a := by linarith
+      subst hb'
+      nlinarith [mul_nonneg (mul_nonneg ha.le hb.le) (sq_nonneg (hx - hy))]
+    exact h1.trans h2
+  have hρ := (density_pos z).le
+  calc ht ^ 2 * stdGaussianDensity z ≤ (a * hx ^ 2 + b * hy ^ 2) * stdGaussianDensity z :=
+        mul_le_mul_of_nonneg_right hsq hρ
+    _ = _ := by ring
+
+theorem plainStudentEnergy_convex (hd : 2 ≤ d) (c : Fin n → ℝ) (hc : ∀ i, 0 ≤ c i)
+    (w : Fin n → Vec d) (A : Vec d →ₗ[ℝ] Vec d) :
+    ConvexOn ℝ Set.univ (plainStudentEnergy (π / 2) c w A) := by
+  refine convexOn_iff_forall_pos.mpr ⟨convex_univ, ?_⟩
+  intro x _ y _ a b ha hb hab
+  simp only [smul_eq_mul]
+  have hint : ∀ t : ℝ, Integrable (fun z : Vec d =>
+      (∑ j, c j * max 0 (inner (w j + t • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z) :=
+    fun t => plain_student_square_integrable hd c (fun j => w j + t • A (w j))
+  rw [← plain_second_moment_on_linear_path hd c w A (a * x + b * y),
+    ← plain_second_moment_on_linear_path hd c w A x, ← plain_second_moment_on_linear_path hd c w A y]
+  have hsum : a * ((2 * π) * ∫ z : Vec d,
+        (∑ j, c j * max 0 (inner (w j + x • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z) +
+      b * ((2 * π) * ∫ z : Vec d,
+        (∑ j, c j * max 0 (inner (w j + y • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z) =
+      (2 * π) * ∫ z : Vec d,
+        (a * ((∑ j, c j * max 0 (inner (w j + x • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z) +
+         b * ((∑ j, c j * max 0 (inner (w j + y • A (w j)) z : ℝ)) ^ 2 * stdGaussianDensity z)) := by
+    rw [integral_add ((hint x).const_mul a) ((hint y).const_mul b), integral_mul_left,
+      integral_mul_left]
+    ring
+  rw [hsum]
+  apply mul_le_mul_of_nonneg_left _ (by positivity)
+  apply integral_mono (hint _) (((hint x).const_mul a).add ((hint y).const_mul b))
+  intro z
+  exact plain_stretch_pointwise c hc w A ha hb hab z
+
+theorem plain_second_moment_reflect (hd : 2 ≤ d) (J : Vec r →ₗᵢ[ℝ] Vec d)
+    (c : Fin n → ℝ) (w : Fin n → Vec d) :
+    (∫ x : Vec d, (∑ j, c j * max 0 (inner (w j - (2:ℝ) • normalPart J (w j)) x : ℝ)) ^ 2 *
+        stdGaussianDensity x) =
+      ∫ x : Vec d, (∑ j, c j * max 0 (inner (w j) x : ℝ)) ^ 2 * stdGaussianDensity x := by
+  have h1 := plain_second_moment_pair hd c (fun j => w j - (2:ℝ) • normalPart J (w j))
+  have h2 := plain_second_moment_pair hd c w
+  have hπ : (2 * π : ℝ) ≠ 0 := by positivity
+  apply mul_left_cancel₀ hπ
+  rw [h1, h2]
+  apply Finset.sum_congr rfl
+  intro i _
+  apply Finset.sum_congr rfl
+  intro j _
+  rw [reflect_norm, reflect_norm, reflect_inner_reflect]
+
+/-- Normal stretching lemma for the plain ReLU student. -/
+theorem plain_second_moment_projected_lt (hd : 2 ≤ d) (J : Vec r →ₗᵢ[ℝ] Vec d)
+    (c : Fin n → ℝ) (w : Fin n → Vec d) (hc : ∀ i, 0 ≤ c i)
+    (i : Fin n) (hci : 0 < c i) (hQi : normalPart J (w i) ≠ 0) :
+    (∫ x : Vec d, (∑ j, c j * max 0 (inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ)) ^ 2 *
+        stdGaussianDensity x) <
+      ∫ x : Vec d, (∑ j, c j * max 0 (inner (w j + (0:ℝ) • normalMap J (w j)) x : ℝ)) ^ 2 *
+        stdGaussianDensity x := by
+  classical
+  set hP : Vec d → ℝ := fun x => ∑ j, c j * max 0 (inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ)
+  set hA : Vec d → ℝ := fun x => ∑ j, c j * max 0 (inner (w j + (0:ℝ) • normalMap J (w j)) x : ℝ)
+    with hAdef
+  set hB : Vec d → ℝ := fun x => ∑ j, c j * max 0 (inner (w j - (2:ℝ) • normalPart J (w j)) x : ℝ)
+    with hBdef
+  show ∫ x, hP x ^ 2 * stdGaussianDensity x < ∫ x, hA x ^ 2 * stdGaussianDensity x
+  have hnormal : ∀ j x, (inner (normalMap J (w j)) x : ℝ) = inner (normalPart J (w j)) x :=
+    fun j x => rfl
+  have eP : ∀ j x, (inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ) =
+      inner (w j) x - inner (normalPart J (w j)) x := by
+    intro j x; rw [inner_add_left, real_inner_smul_left, hnormal]; ring
+  have eA : ∀ j x, (inner (w j + (0:ℝ) • normalMap J (w j)) x : ℝ) = inner (w j) x := by
+    intro j x; rw [zero_smul, add_zero]
+  have eB : ∀ j x, (inner (w j - (2:ℝ) • normalPart J (w j)) x : ℝ) =
+      inner (w j) x - 2 * inner (normalPart J (w j)) x := by
+    intro j x; rw [inner_sub_left, real_inner_smul_left]
+  have hmid : ∀ x, (hA x + hB x) / 2 =
+      ∑ j, (c j * max 0 (inner (w j) x : ℝ) +
+        c j * max 0 ((inner (w j) x : ℝ) - 2 * inner (normalPart J (w j)) x)) / 2 := by
+    intro x
+    simp only [hAdef, hBdef, eA, eB]
+    rw [← Finset.sum_div, Finset.sum_add_distrib]
+  have hterm : ∀ j x, c j * max 0 (inner (w j + (-1:ℝ) • normalMap J (w j)) x : ℝ) ≤
+      (c j * max 0 (inner (w j) x : ℝ) +
+        c j * max 0 ((inner (w j) x : ℝ) - 2 * inner (normalPart J (w j)) x)) / 2 := by
+    intro j x
+    rw [eP]
+    have := relu_midpoint (inner (w j) x) (inner (normalPart J (w j)) x)
+    nlinarith [hc j, this]
+  have hPle : ∀ x, hP x ≤ (hA x + hB x) / 2 := by
+    intro x
+    rw [hmid]
+    exact Finset.sum_le_sum fun j _ => hterm j x
+  have hP0 : ∀ x, 0 ≤ hP x :=
+    fun x => Finset.sum_nonneg fun j _ => mul_nonneg (hc j) (le_max_left _ _)
+  set D : Vec d → ℝ := fun x => ((hA x ^ 2 + hB x ^ 2) / 2 - hP x ^ 2) * stdGaussianDensity x
+    with hDdef
+  have hDnonneg : ∀ x, 0 ≤ D x := by
+    intro x
+    apply mul_nonneg _ (density_pos x).le
+    have h1 : hP x ^ 2 ≤ ((hA x + hB x) / 2) ^ 2 := pow_le_pow_left (hP0 x) (hPle x) 2
+    nlinarith [sq_nonneg (hA x - hB x)]
+  set U : Set (Vec d) := {x | |(inner (w i) x : ℝ) - inner (normalPart J (w i)) x| <
+    |(inner (normalPart J (w i)) x : ℝ)|}
+  have hUopen : IsOpen U := by
+    apply isOpen_lt
+    · exact ((continuous_const.inner continuous_id).sub (continuous_const.inner continuous_id)).abs
+    · exact (continuous_const.inner continuous_id).abs
+  have hUne : U.Nonempty := by
+    refine ⟨normalPart J (w i), ?_⟩
+    show |(inner (w i) (normalPart J (w i)) : ℝ) - inner (normalPart J (w i)) (normalPart J (w i))| <
+      |(inner (normalPart J (w i)) (normalPart J (w i)) : ℝ)|
+    rw [normal_inner, sub_self, abs_zero, real_inner_self_eq_norm_sq, abs_of_nonneg (sq_nonneg _)]
+    exact pow_pos (norm_pos_iff.mpr hQi) 2
+  have hDpos : ∀ x ∈ U, 0 < D x := by
+    intro x hx
+    apply mul_pos _ (density_pos x)
+    have hstrict : hP x < (hA x + hB x) / 2 := by
+      rw [hmid]
+      refine Finset.sum_lt_sum (fun j _ => hterm j x) ⟨i, Finset.mem_univ i, ?_⟩
+      rw [eP]
+      have := relu_midpoint_strict hx
+      nlinarith [hci, this]
+    have h1 : hP x ^ 2 < ((hA x + hB x) / 2) ^ 2 := pow_lt_pow_left hstrict (hP0 x) two_ne_zero
+    nlinarith [sq_nonneg (hA x - hB x)]
+  have hintP : Integrable (fun x => hP x ^ 2 * stdGaussianDensity x) :=
+    plain_student_square_integrable hd c (fun j => w j + (-1:ℝ) • normalMap J (w j))
+  have hintA : Integrable (fun x => hA x ^ 2 * stdGaussianDensity x) :=
+    plain_student_square_integrable hd c (fun j => w j + (0:ℝ) • normalMap J (w j))
+  have hintB : Integrable (fun x => hB x ^ 2 * stdGaussianDensity x) :=
+    plain_student_square_integrable hd c (fun j => w j - (2:ℝ) • normalPart J (w j))
+  have hintAB : Integrable (fun x => (hA x ^ 2 * stdGaussianDensity x +
+      hB x ^ 2 * stdGaussianDensity x) / 2) := (hintA.add hintB).div_const 2
+  have hDeq : ∀ x, D x = (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2 -
+      hP x ^ 2 * stdGaussianDensity x := by
+    intro x; simp only [hDdef]; ring
+  have hintD : Integrable D := by
+    have : D = fun x => (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2 -
+        hP x ^ 2 * stdGaussianDensity x := funext hDeq
+    rw [this]
+    exact hintAB.sub hintP
+  have hpos : 0 < ∫ x, D x := by
+    rw [integral_pos_iff_support_of_nonneg_ae (eventually_of_forall hDnonneg) hintD]
+    apply lt_of_lt_of_le (hUopen.measure_pos volume hUne)
+    apply measure_mono
+    intro x hx
+    exact (hDpos x hx).ne'
+  have hsplit : ∫ x, D x = ((∫ x, hA x ^ 2 * stdGaussianDensity x) +
+      ∫ x, hB x ^ 2 * stdGaussianDensity x) / 2 - ∫ x, hP x ^ 2 * stdGaussianDensity x := by
+    calc ∫ x, D x = ∫ x, ((hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2 -
+          hP x ^ 2 * stdGaussianDensity x) := integral_congr_ae (eventually_of_forall hDeq)
+      _ = (∫ x, (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x) / 2) -
+          ∫ x, hP x ^ 2 * stdGaussianDensity x := integral_sub hintAB hintP
+      _ = (∫ x, (hA x ^ 2 * stdGaussianDensity x + hB x ^ 2 * stdGaussianDensity x)) / 2 -
+          ∫ x, hP x ^ 2 * stdGaussianDensity x := by rw [integral_div]
+      _ = _ := by rw [integral_add hintA hintB]
+  have hrefl : ∫ x, hB x ^ 2 * stdGaussianDensity x = ∫ x, hA x ^ 2 * stdGaussianDensity x := by
+    have h := plain_second_moment_reflect hd J c w
+    simp only [hBdef, hAdef, eA]
+    exact h
+  have key : 0 < ((∫ x, hA x ^ 2 * stdGaussianDensity x) +
+      ∫ x, hB x ^ 2 * stdGaussianDensity x) / 2 - ∫ x, hP x ^ 2 * stdGaussianDensity x :=
+    hsplit ▸ hpos
+  rw [hrefl] at key
+  linarith
+
+/-- Positivity of the plain mixed energy, the centered one plus the
+first-moment correction, by the same stretching argument for the ReLU feature. -/
+theorem plain_mixed_energy_pos (hd : 2 ≤ d)
+    (J : Vec r →ₗᵢ[ℝ] Vec d) (c : Fin n → ℝ) (w : Fin n → Vec d)
+    (hw : ∀ i, ‖w i‖ = 1) (hc : ∀ i, 0 ≤ c i)
+    (i : Fin n) (hci : 0 < c i) (hQi : normalPart J (w i) ≠ 0) :
+    0 < mixedEnergy J c w + (π / 2) * ‖∑ i, c i • normalPart J (w i)‖ ^ 2 := by
+  have hjetP := plain_student_energy_jet (π / 2) c w (normalMap J) hw
+  have hjetC := student_energy_jet c w (normalMap J) hw
+  have hslope : (∑ i, ∑ j, c i * c j * pairSlope (w i) (w j) (normalMap J)) =
+      2 * mixedEnergy J c w := by
+    rw [← eq_second_moment_derivative J c w hw]
+    exact hjetC.first.deriv.symm
+  have hAM : normalPart J (moment c w) = ∑ i, c i • normalPart J (w i) := by
+    have : normalMap J (moment c w) = ∑ i, c i • normalMap J (w i) := by
+      simp only [moment, map_sum, LinearMap.map_smul]
+    exact this
+  have hMAM : (inner (moment c w) (normalMap J (moment c w)) : ℝ) =
+      ‖∑ i, c i • normalPart J (w i)‖ ^ 2 := by
+    change (inner (moment c w) (normalPart J (moment c w)) : ℝ) = _
+    rw [normal_inner, real_inner_self_eq_norm_sq, hAM]
+  have hD : HasDerivAt (plainStudentEnergy (π / 2) c w (normalMap J))
+      (2 * (mixedEnergy J c w + (π / 2) * ‖∑ i, c i • normalPart J (w i)‖ ^ 2)) 0 := by
+    have h := hjetP.first
+    rw [hslope, hMAM] at h
+    convert h using 1
+    ring
+  have hconv := plainStudentEnergy_convex hd c hc w (normalMap J)
+  have hsecant : plainStudentEnergy (π / 2) c w (normalMap J) 0 -
+      plainStudentEnergy (π / 2) c w (normalMap J) (-1) ≤
+      2 * (mixedEnergy J c w + (π / 2) * ‖∑ i, c i • normalPart J (w i)‖ ^ 2) := by
+    have hlim : Tendsto (slope (plainStudentEnergy (π / 2) c w (normalMap J)) 0) (𝓝[<] 0)
+        (𝓝 (2 * (mixedEnergy J c w + (π / 2) * ‖∑ i, c i • normalPart J (w i)‖ ^ 2))) :=
+      (hasDerivAt_iff_tendsto_slope.mp hD).mono_left
+        (nhdsWithin_mono 0 (fun y (hy : y ∈ Set.Iio 0) => ne_of_lt hy))
+    refine ge_of_tendsto hlim ?_
+    filter_upwards [Ioo_mem_nhdsWithin_Iio (show (0:ℝ) ∈ Set.Ioc (-1) 0 from ⟨by norm_num, le_refl 0⟩)]
+      with y hy
+    have h := hconv.secant_mono (Set.mem_univ 0) (Set.mem_univ (-1)) (Set.mem_univ y)
+      (by norm_num) (ne_of_lt hy.2) hy.1.le
+    rw [slope_def_field]
+    have hL : (plainStudentEnergy (π / 2) c w (normalMap J) (-1) -
+        plainStudentEnergy (π / 2) c w (normalMap J) 0) / (-1 - 0) =
+        plainStudentEnergy (π / 2) c w (normalMap J) 0 -
+          plainStudentEnergy (π / 2) c w (normalMap J) (-1) := by
+      ring
+    rw [hL] at h
+    exact h
+  have hgap : plainStudentEnergy (π / 2) c w (normalMap J) (-1) <
+      plainStudentEnergy (π / 2) c w (normalMap J) 0 := by
+    rw [← plain_second_moment_on_linear_path hd c w (normalMap J) (-1),
+      ← plain_second_moment_on_linear_path hd c w (normalMap J) 0]
+    exact mul_lt_mul_of_pos_left (plain_second_moment_projected_lt hd J c w hc i hci hQi)
+      (by positivity)
+  linarith
+
+end PaperLeanFormalization.NormalStretching
 
 namespace PaperLeanFormalization.FirstDerivativeExpectation
 
@@ -2997,23 +3543,20 @@ theorem deriv_residual_add_pi {n m : ℕ}
   conv_rhs => rw [hfun]
   rw [h.deriv, (Planar.hasDerivAt_residual c theta s beta (x + π)).deriv, mul_one]
 
-/-- Propagation of a zero arc around the circle by the gap Green function
-(`lem:gap-sign`). All lines lie in `[ε, xstar)`, so the cut `0` sits inside the
-zero arc. If a positive net line existed, the gap of the last positive line
-would contain the zero arc and, by the double-zero gap occupancy behind
-`lem:line-count`, a negative line as well; the gap lemma then makes the residual
-negative on that gap, a contradiction. Without positive lines the residual is a
-nonpositive combination of positive kernels, so it vanishes on the arc only if
-no negative line exists either. The nonnegative-teacher condition is used only
-to identify a positive student on every positive net line. -/
-theorem canonical_zero_arc_residual_zero {n m : ℕ}
+/-- The zero arc excludes positive net lines. With every positive net line a
+double zero, the gap occupancy behind `lem:line-count` puts a negative line in
+the gap of the last positive line; that gap also contains the zero arc, and
+the gap lemma `lem:gap-sign` makes the residual negative there. The
+nonnegative-teacher condition is used only to identify a positive student on
+every positive net line. -/
+theorem zero_arc_no_positive_line {n m : ℕ}
     (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
     {ε xstar : ℝ} (hε : 0 < ε) (hxπ : xstar < π)
     (htheta : ∀ i, ε ≤ theta i ∧ theta i < xstar)
     (hbeta : ∀ k, ε ≤ beta k ∧ beta k < xstar)
     (hstart : ∀ x, 0 < x → x < ε → Planar.residual c theta s beta x = 0)
     (hcrit : fderiv ℝ (Planar.variableLoss s beta) (c, theta) = 0) :
-    ∀ x, Planar.residual c theta s beta x = 0 := by
+    Planar.positiveLines c theta s beta = ∅ := by
   classical
   have hθ : ∀ i, 0 ≤ theta i ∧ theta i < π :=
     fun i ↦ ⟨hε.le.trans (htheta i).1, (htheta i).2.trans hxπ⟩
@@ -3038,107 +3581,117 @@ theorem canonical_zero_arc_residual_zero {n m : ℕ}
     rwa [hi] at h
   have hhalf : Planar.residual c theta s beta (ε / 2) = 0 :=
     hstart (ε / 2) (half_pos hε) (half_lt_self hε)
+  by_contra hne
+  have hnonempty : (Planar.positiveLines c theta s beta).Nonempty :=
+    Finset.nonempty_iff_ne_empty.mpr hne
+  obtain ⟨r, hcard⟩ : ∃ r, (Planar.positiveLines c theta s beta).card = r + 1 :=
+    ⟨_, (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr hnonempty)).symm⟩
+  have hd := Planar.signed_sorted_positive_data c theta s beta hcard hzeros
+  have hrange := Planar.signed_sorted_ranges c theta s beta hcard hθ hβ
+  have heq := Planar.residual_eq_signed_sorted c theta s beta hcard
+  dsimp only at hd hrange
+  set a := (Planar.positiveLines c theta s beta).orderEmbOfFin hcard
+  set b := (Planar.negativeLines c theta s beta).orderEmbOfFin rfl
+  set u : Fin (r + 1) → ℝ := fun i ↦ Planar.netWeight c theta s beta (a i)
+  set v := fun k ↦ -Planar.netWeight c theta s beta (b k)
+  obtain ⟨gap, hgap, hsurj, -⟩ := Planar.ordered_count_of_double_zeros u a v b
+    a.strictMono hrange.1 hrange.2 hd.1 hd.2.1 hd.2.2.1 hd.2.2.2.1 hd.2.2.2.2
+  obtain ⟨k, hk⟩ := hsurj (Fin.last r)
+  have hkgap := (hgap k (Fin.last r)).mp hk
+  have hright : Planar.Gaps.rightEndpoint a (Fin.last r) = a 0 + π := by
+    simp [Planar.Gaps.rightEndpoint]
+  rw [hright] at hkgap
+  set t := a (Fin.last r)
+  have hamem : ∀ i, a i ∈ Finset.univ.image theta ∪ Finset.univ.image beta :=
+    fun i ↦ (Finset.mem_filter.mp (Finset.orderEmbOfFin_mem _ hcard i)).1
+  have ha0 : ε ≤ a 0 := (hlines _ (hamem 0)).1
+  have htπ : t < π := (hlines _ (hamem (Fin.last r))).2.trans hxπ
+  have ht0 : 0 ≤ t := (hrange.1 (Fin.last r)).1
+  have ha0t : a 0 ≤ t := a.strictMono.monotone (Fin.zero_le _)
+  have hl0 : 0 < a 0 + π - t := by linarith
+  have hlπ : a 0 + π - t ≤ π := by linarith
+  have hcanon : ∀ x, 0 ≤ x → x < π →
+      canonicalPlanarAngle (x - t) = Planar.Gaps.relativeAngle t x := by
+    intro x hx0 hxπ'
+    unfold canonicalPlanarAngle Planar.Gaps.relativeAngle
+    rw [toIcoMod_eq_iff]
+    split_ifs
+    · refine ⟨⟨by linarith, by linarith⟩, -1, ?_⟩
+      simp only [zsmul_eq_mul, Int.cast_neg, Int.cast_one]
+      ring
+    · refine ⟨⟨by linarith, by linarith⟩, 0, ?_⟩
+      simp
+  set a' := fun i ↦ canonicalPlanarAngle (a i - t)
+  set b' := fun k ↦ canonicalPlanarAngle (b k - t)
+  have hshift : ∀ x, Planar.residual u a' v b' x = Planar.residual u a v b (t + x) :=
+    fun x ↦ (residual_canonical_angles u (fun i ↦ a i - t) v (fun k ↦ b k - t) x).trans
+      (residual_common_angle_translation u a v b t x)
+  have hshiftD : ∀ x, deriv (Planar.residual u a' v b') x =
+      deriv (Planar.residual u a v b) (t + x) :=
+    fun x ↦ deriv_residual_shift_canonical u a v b t x
+  have htorque : ∀ x, BeamGapKernel.residualTorque u a' v b' x =
+      deriv (Planar.residual u a' v b') x :=
+    fun x ↦ ((Planar.hasDerivAt_residual u a' v b' x).deriv).symm
+  have hderivA : ∀ i, deriv (Planar.residual u a v b) (a i) = 0 :=
+    fun i ↦ (Planar.hasDerivAt_residual u a v b (a i)).deriv.trans (hd.2.2.2.2 i)
+  have hz0 : Planar.residual u a' v b' 0 = 0 := by
+    rw [hshift, add_zero]
+    exact hd.2.2.2.1 (Fin.last r)
+  have ht0' : BeamGapKernel.residualTorque u a' v b' 0 = 0 := by
+    rw [htorque, hshiftD, add_zero]
+    exact hderivA (Fin.last r)
+  have hzl : Planar.residual u a' v b' (a 0 + π - t) = 0 := by
+    rw [hshift, show t + (a 0 + π - t) = a 0 + π by ring, Planar.residual_periodic]
+    exact hd.2.2.2.1 0
+  have htl : BeamGapKernel.residualTorque u a' v b' (a 0 + π - t) = 0 := by
+    rw [htorque, hshiftD, show t + (a 0 + π - t) = a 0 + π by ring,
+      deriv_residual_add_pi]
+    exact hderivA 0
+  have ha'range : ∀ i, 0 ≤ a' i ∧ a' i ≤ π :=
+    fun i ↦ ⟨(canonical_planar_angle_range _).1, (canonical_planar_angle_range _).2.le⟩
+  have hb'range : ∀ k, 0 ≤ b' k ∧ b' k ≤ π :=
+    fun k ↦ ⟨(canonical_planar_angle_range _).1, (canonical_planar_angle_range _).2.le⟩
+  have ha'gap : ∀ i, a' i = 0 ∨ a 0 + π - t ≤ a' i := by
+    intro i
+    show canonicalPlanarAngle (a i - t) = 0 ∨ a 0 + π - t ≤ canonicalPlanarAngle (a i - t)
+    rw [hcanon (a i) (hrange.1 i).1 (hrange.1 i).2]
+    unfold Planar.Gaps.relativeAngle
+    by_cases hi : i = Fin.last r
+    · left
+      have hit : a i = t := by rw [hi]
+      rw [hit, if_neg (lt_irrefl _), sub_self]
+    · right
+      have hlt : a i < t := a.strictMono (lt_of_le_of_ne (Fin.le_last i) hi)
+      rw [if_pos hlt]
+      linarith [a.strictMono.monotone (Fin.zero_le i)]
+  have hgapsign := Planar.gap_sign_of_clean_config u a' v b' hl0 hlπ ha'range ha'gap
+    hb'range hd.2.1 hz0 ht0' hzl htl
+  dsimp only at hgapsign
+  have hT : (Finset.univ.filter (fun k ↦ 0 < b' k ∧ b' k < a 0 + π - t)).Nonempty := by
+    refine ⟨k, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+    show 0 < canonicalPlanarAngle (b k - t) ∧ canonicalPlanarAngle (b k - t) < a 0 + π - t
+    rw [hcanon (b k) (hrange.2 k).1 (hrange.2 k).2]
+    exact hkgap
+  have hneg := (hgapsign.2 hT).1 (π - t + ε / 2) (by linarith) (by linarith)
+  have hzero' : Planar.residual u a' v b' (π - t + ε / 2) = 0 := by
+    rw [hshift, show t + (π - t + ε / 2) = ε / 2 + π by ring, Planar.residual_periodic,
+      ← heq]
+    exact hhalf
+  linarith
+
+/-- Without positive net lines the residual is a nonpositive combination of
+positive kernels, so it vanishes on the zero arc only if no negative net line
+exists either; then it vanishes identically. -/
+theorem zero_arc_residual_zero_of_no_positive_line {n m : ℕ}
+    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ)
+    {ε : ℝ} (hε : 0 < ε)
+    (hstart : ∀ x, 0 < x → x < ε → Planar.residual c theta s beta x = 0)
+    (hP : Planar.positiveLines c theta s beta = ∅) :
+    ∀ x, Planar.residual c theta s beta x = 0 := by
+  classical
+  have hhalf : Planar.residual c theta s beta (ε / 2) = 0 :=
+    hstart (ε / 2) (half_pos hε) (half_lt_self hε)
   have hkernel : ∀ x, 0 < Planar.kernel x := Planar.Gaps.centered_kernel_pos
-  -- Step 1: there is no positive net line.
-  have hP : Planar.positiveLines c theta s beta = ∅ := by
-    by_contra hne
-    have hnonempty : (Planar.positiveLines c theta s beta).Nonempty :=
-      Finset.nonempty_iff_ne_empty.mpr hne
-    obtain ⟨r, hcard⟩ : ∃ r, (Planar.positiveLines c theta s beta).card = r + 1 :=
-      ⟨_, (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr hnonempty)).symm⟩
-    have hd := Planar.signed_sorted_positive_data c theta s beta hcard hzeros
-    have hrange := Planar.signed_sorted_ranges c theta s beta hcard hθ hβ
-    have heq := Planar.residual_eq_signed_sorted c theta s beta hcard
-    dsimp only at hd hrange
-    set a := (Planar.positiveLines c theta s beta).orderEmbOfFin hcard
-    set b := (Planar.negativeLines c theta s beta).orderEmbOfFin rfl
-    set u : Fin (r + 1) → ℝ := fun i ↦ Planar.netWeight c theta s beta (a i)
-    set v := fun k ↦ -Planar.netWeight c theta s beta (b k)
-    obtain ⟨gap, hgap, hsurj, -⟩ := Planar.ordered_count_of_double_zeros u a v b
-      a.strictMono hrange.1 hrange.2 hd.1 hd.2.1 hd.2.2.1 hd.2.2.2.1 hd.2.2.2.2
-    obtain ⟨k, hk⟩ := hsurj (Fin.last r)
-    have hkgap := (hgap k (Fin.last r)).mp hk
-    have hright : Planar.Gaps.rightEndpoint a (Fin.last r) = a 0 + π := by
-      simp [Planar.Gaps.rightEndpoint]
-    rw [hright] at hkgap
-    set t := a (Fin.last r)
-    have hamem : ∀ i, a i ∈ Finset.univ.image theta ∪ Finset.univ.image beta :=
-      fun i ↦ (Finset.mem_filter.mp (Finset.orderEmbOfFin_mem _ hcard i)).1
-    have ha0 : ε ≤ a 0 := (hlines _ (hamem 0)).1
-    have htπ : t < π := (hlines _ (hamem (Fin.last r))).2.trans hxπ
-    have ht0 : 0 ≤ t := (hrange.1 (Fin.last r)).1
-    have ha0t : a 0 ≤ t := a.strictMono.monotone (Fin.zero_le _)
-    have hl0 : 0 < a 0 + π - t := by linarith
-    have hlπ : a 0 + π - t ≤ π := by linarith
-    have hcanon : ∀ x, 0 ≤ x → x < π →
-        canonicalPlanarAngle (x - t) = Planar.Gaps.relativeAngle t x := by
-      intro x hx0 hxπ'
-      unfold canonicalPlanarAngle Planar.Gaps.relativeAngle
-      rw [toIcoMod_eq_iff]
-      split_ifs
-      · refine ⟨⟨by linarith, by linarith⟩, -1, ?_⟩
-        simp only [zsmul_eq_mul, Int.cast_neg, Int.cast_one]
-        ring
-      · refine ⟨⟨by linarith, by linarith⟩, 0, ?_⟩
-        simp
-    set a' := fun i ↦ canonicalPlanarAngle (a i - t)
-    set b' := fun k ↦ canonicalPlanarAngle (b k - t)
-    have hshift : ∀ x, Planar.residual u a' v b' x = Planar.residual u a v b (t + x) :=
-      fun x ↦ (residual_canonical_angles u (fun i ↦ a i - t) v (fun k ↦ b k - t) x).trans
-        (residual_common_angle_translation u a v b t x)
-    have hshiftD : ∀ x, deriv (Planar.residual u a' v b') x =
-        deriv (Planar.residual u a v b) (t + x) :=
-      fun x ↦ deriv_residual_shift_canonical u a v b t x
-    have htorque : ∀ x, BeamGapKernel.residualTorque u a' v b' x =
-        deriv (Planar.residual u a' v b') x :=
-      fun x ↦ ((Planar.hasDerivAt_residual u a' v b' x).deriv).symm
-    have hderivA : ∀ i, deriv (Planar.residual u a v b) (a i) = 0 :=
-      fun i ↦ (Planar.hasDerivAt_residual u a v b (a i)).deriv.trans (hd.2.2.2.2 i)
-    have hz0 : Planar.residual u a' v b' 0 = 0 := by
-      rw [hshift, add_zero]
-      exact hd.2.2.2.1 (Fin.last r)
-    have ht0' : BeamGapKernel.residualTorque u a' v b' 0 = 0 := by
-      rw [htorque, hshiftD, add_zero]
-      exact hderivA (Fin.last r)
-    have hzl : Planar.residual u a' v b' (a 0 + π - t) = 0 := by
-      rw [hshift, show t + (a 0 + π - t) = a 0 + π by ring, Planar.residual_periodic]
-      exact hd.2.2.2.1 0
-    have htl : BeamGapKernel.residualTorque u a' v b' (a 0 + π - t) = 0 := by
-      rw [htorque, hshiftD, show t + (a 0 + π - t) = a 0 + π by ring,
-        deriv_residual_add_pi]
-      exact hderivA 0
-    have ha'range : ∀ i, 0 ≤ a' i ∧ a' i ≤ π :=
-      fun i ↦ ⟨(canonical_planar_angle_range _).1, (canonical_planar_angle_range _).2.le⟩
-    have hb'range : ∀ k, 0 ≤ b' k ∧ b' k ≤ π :=
-      fun k ↦ ⟨(canonical_planar_angle_range _).1, (canonical_planar_angle_range _).2.le⟩
-    have ha'gap : ∀ i, a' i = 0 ∨ a 0 + π - t ≤ a' i := by
-      intro i
-      show canonicalPlanarAngle (a i - t) = 0 ∨ a 0 + π - t ≤ canonicalPlanarAngle (a i - t)
-      rw [hcanon (a i) (hrange.1 i).1 (hrange.1 i).2]
-      unfold Planar.Gaps.relativeAngle
-      by_cases hi : i = Fin.last r
-      · left
-        have hit : a i = t := by rw [hi]
-        rw [hit, if_neg (lt_irrefl _), sub_self]
-      · right
-        have hlt : a i < t := a.strictMono (lt_of_le_of_ne (Fin.le_last i) hi)
-        rw [if_pos hlt]
-        linarith [a.strictMono.monotone (Fin.zero_le i)]
-    have hgapsign := Planar.gap_sign_of_clean_config u a' v b' hl0 hlπ ha'range ha'gap
-      hb'range hd.2.1 hz0 ht0' hzl htl
-    dsimp only at hgapsign
-    have hT : (Finset.univ.filter (fun k ↦ 0 < b' k ∧ b' k < a 0 + π - t)).Nonempty := by
-      refine ⟨k, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
-      show 0 < canonicalPlanarAngle (b k - t) ∧ canonicalPlanarAngle (b k - t) < a 0 + π - t
-      rw [hcanon (b k) (hrange.2 k).1 (hrange.2 k).2]
-      exact hkgap
-    have hneg := (hgapsign.2 hT).1 (π - t + ε / 2) (by linarith) (by linarith)
-    have hzero' : Planar.residual u a' v b' (π - t + ε / 2) = 0 := by
-      rw [hshift, show t + (π - t + ε / 2) = ε / 2 + π by ring, Planar.residual_periodic,
-        ← heq]
-      exact hhalf
-    linarith
-  -- Step 2: without positive lines, the zero arc excludes negative lines too.
   have hnonpos : ∀ x ∈ Finset.univ.image theta ∪ Finset.univ.image beta,
       Planar.netWeight c theta s beta x ≤ 0 := by
     intro x hx
@@ -3170,6 +3723,19 @@ theorem canonical_zero_arc_residual_zero {n m : ℕ}
     rw [hN] at hmem
     exact Finset.not_mem_empty y hmem
   · rw [h0, zero_mul]
+
+/-- Propagation of a zero arc around the circle by the gap Green function
+(`lem:gap-sign`): the two lemmas above in sequence. -/
+theorem canonical_zero_arc_residual_zero {n m : ℕ}
+    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
+    {ε xstar : ℝ} (hε : 0 < ε) (hxπ : xstar < π)
+    (htheta : ∀ i, ε ≤ theta i ∧ theta i < xstar)
+    (hbeta : ∀ k, ε ≤ beta k ∧ beta k < xstar)
+    (hstart : ∀ x, 0 < x → x < ε → Planar.residual c theta s beta x = 0)
+    (hcrit : fderiv ℝ (Planar.variableLoss s beta) (c, theta) = 0) :
+    ∀ x, Planar.residual c theta s beta x = 0 :=
+  zero_arc_residual_zero_of_no_positive_line c theta s beta hε hstart
+    (zero_arc_no_positive_line c theta s beta hs hε hxπ htheta hbeta hstart hcrit)
 
 
 /-- A finite family strictly inside `(0,π)` has a common positive margin
@@ -3660,41 +4226,11 @@ theorem generators_in_subspace_of_isometric_ranges {d n m : ℕ}
   rw [← hy]
   exact (b.repr.symm y).property
 
-/-- Both actual local-minimum calculations give a nonpositive centered mixed
-energy. Plain ReLU merely adds a nonnegative squared normal first moment. -/
-theorem mixed_energy_nonpos_of_kernel_local_minimum
-    (hd : 2 ≤ d) (q : PaperLeanFormalization.Model)
-    (J : Vec r →ₗᵢ[ℝ] Vec d)
-    (c : Fin n → ℝ) (w : Fin n → Vec d)
-    (s : Fin m → ℝ) (v : Fin m → Vec d)
-    (hw : ∀ i, ‖w i‖ = 1) (hv : ∀ k, ‖v k‖ = 1)
-    (hvJ : ∀ k, v k ∈ Set.range J)
-    (hmin : IsLocalMinOn
-      (fun p : Definitions.Parameters d n ↦
-        massNetLossKernel (Definitions.Kernel q) p.1 p.2 s v)
-      {p | ∀ i, ‖p.2 i‖ = 1} (c, w)) :
-    mixedEnergy J c w ≤ 0 := by
-  let B := EuclideanSpace.basisFun (Fin d) ℝ
-  cases q with
-  | centered =>
-      exact le_of_eq (FirstDerivativeExpectation.centered_mixed_energy_zero_from_expectation
-        hd J B c w s v hw hv hvJ hmin)
-  | plainRelu =>
-      have heq : PlainConfinementVariation.plainVariableLoss (π/2) s v =
-          (fun p : Definitions.Parameters d n ↦
-            massNetLossKernel (Definitions.Kernel .plainRelu) p.1 p.2 s v) := by
-        funext p
-        exact PlainConfinementVariation.plain_loss_kernel_form (π/2) s v p
-      rw [← heq] at hmin
-      have hz := PlainConfinementVariation.plain_mixed_energy_zero
-        J B c w s v hw hv hvJ hmin
-      have hsquare : 0 ≤ (π/2) * ‖∑ i, c i • normalPart J (w i)‖^2 :=
-        mul_nonneg (half_pos Real.pi_pos).le (sq_nonneg _)
-      linarith only [hz, hsquare]
-
-/-- The direct confinement endgame permits zero masses and collisions.
-The strictly positive radial/arcsine energy rules out each active normal
-component, and zero weighted generators are handled without deleting neurons. -/
+/-- The direct confinement endgame permits zero masses and collisions. For
+either feature the mixed curvature vanishes at a local minimum, while the
+normal-stretching lemma makes it positive as soon as an active generator has
+a normal component; zero weighted generators are handled without deleting
+neurons. -/
 theorem nonnegative_confinement_in_range
     (hd : 2 ≤ d) (q : PaperLeanFormalization.Model)
     (J : Vec r →ₗᵢ[ℝ] Vec d)
@@ -3708,14 +4244,27 @@ theorem nonnegative_confinement_in_range
       {p | ∀ i, ‖p.2 i‖ = 1} (c, w)) :
     (∀ i, 0 < c i → w i ∈ Set.range J) ∧
       (∀ i, c i • w i ∈ Set.range J) := by
-  have hnonpos := mixed_energy_nonpos_of_kernel_local_minimum hd q J c w s v hw hv hvJ hmin
   have hdir : ∀ i, 0 < c i → w i ∈ Set.range J := by
     intro i hci
     apply (normal_part_eq_zero_iff_mem_range J (w i)).mp
     by_contra hQi
-    have hpositive := MixedEnergyPositive.mixedEnergy_pos_of_active_normal
-      J c w hw hc (GaussianSignGram.arcsin_gram_nonnegative hd w hw) i hci hQi
-    exact (not_lt_of_ge hnonpos) hpositive
+    let B := EuclideanSpace.basisFun (Fin d) ℝ
+    cases q with
+    | centered =>
+        have hzero := FirstDerivativeExpectation.centered_mixed_energy_zero_from_expectation
+          hd J B c w s v hw hv hvJ hmin
+        have hpos := NormalStretching.mixedEnergy_pos_of_active_normal hd J c w hw hc i hci hQi
+        linarith
+    | plainRelu =>
+        have heq : PlainConfinementVariation.plainVariableLoss (π/2) s v =
+            (fun p : Definitions.Parameters d n ↦
+              massNetLossKernel (Definitions.Kernel .plainRelu) p.1 p.2 s v) := by
+          funext p
+          exact PlainConfinementVariation.plain_loss_kernel_form (π/2) s v p
+        rw [← heq] at hmin
+        have hzero := PlainConfinementVariation.plain_mixed_energy_zero J B c w s v hw hv hvJ hmin
+        have hpos := NormalStretching.plain_mixed_energy_pos hd J c w hw hc i hci hQi
+        linarith
   exact ⟨hdir, weighted_generators_in_range_of_positive_directions J c w hc hdir⟩
 
 /-- Positive masses permit forgetting the weights in the common confinement
