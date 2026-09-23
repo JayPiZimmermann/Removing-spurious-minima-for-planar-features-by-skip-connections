@@ -53,7 +53,8 @@ def make_panel(index, grayscale=False):
             ax.add_patch(Polygon(vertices, closed=True, facecolor=color, alpha=.09, lw=0))
             ax.add_patch(Polygon(vertices, closed=True, fill=False, edgecolor=color,
                                  linewidth=WIDTH, linestyle=linestyle, gid="data-outline"))
-        for i in (0, 2, 4):
+        # every vertex of P_c is carried to the corresponding vertex of P by tau
+        for i in range(len(raw_polygon)):
             ax.plot(*zip(centered_polygon[i], raw_polygon[i]), color="#AAAAAA", lw=.4,
                     linestyle=":", zorder=0)
         points = np.array([*raw_polygon, *centered_polygon])

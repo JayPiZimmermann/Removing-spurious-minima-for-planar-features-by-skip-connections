@@ -225,7 +225,13 @@ def make_panel(gap=False, grayscale=False, angular=False):
             handles.append(line)
         for beta in BETA:
             ax.axvline(beta, color=blue, **TEACHER_GUIDE)
-        teacher, = ax.plot(BETA, residual(BETA, masses, theta), "o", color=blue,
+        # A teacher inside the selected gap is marked on its own dotted Green
+        # contribution; the others, which have no dotted curve, stay on F_C.
+        in_gap = {round(theta[0]+p, 12): -4*t*green(np.array([p]), length, p)[0]
+                  for p, t in zip(sources, source_masses)}
+        teacher_y = np.array([in_gap.get(round(beta, 12), residual(beta, masses, theta))
+                              for beta in BETA])
+        teacher, = ax.plot(BETA, teacher_y, "o", color=blue,
                            ms=3.2, clip_on=False, label=r"$\beta_k$")
         student, = ax.plot(theta, np.zeros_like(theta), "o", mec=orange, mfc="white",
                            mew=WIDTH, ms=3.5, clip_on=False, label=r"$\theta_i$")

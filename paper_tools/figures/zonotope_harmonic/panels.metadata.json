@@ -44,9 +44,9 @@
     0.34495484966750123
   ],
   "sha256": {
-    "generate_panels.py": "854475617526e424c69d0d4b905bc1f2814a4ee694d5a414440c34c359c8316b",
-    "generate_zonotope_harmonic.py": "a171f1bf25800cafc66beb400f1ef4709bbb9345404e9f25af10e4f4be9fa4e6",
-    "polytope_translation.pdf": "90168cb0dd2b9083049fb44e7a389baad366fae1e482a616199e16ff06d4bd19",
+    "generate_panels.py": "1d3ed0fb2b8f940f59ce166d2752c0de9949592dd924fa8e68e4cf23fad7bd19",
+    "generate_zonotope_harmonic.py": "9460e80c89ca0fb290c1f4fe916f08d764cd9f13fdbf7bfe2ed79d04659fe9d3",
+    "polytope_translation.pdf": "6099228d2bb83935257cadee0d5ffdcd20310a48474888f24eee42bf5bf3f171",
     "support_functions.pdf": "fc091ac9d589fb446411553e2c6a1eaf3f9590b93ffb7c1708218ab3bc0b1ee7",
     "fourier_spectrum.pdf": "c0650b94c3284ff04a02e9febba86664fab1e525eba71a3e3829580b307a17e4"
   }

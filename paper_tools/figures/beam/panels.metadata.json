@@ -88,8 +88,8 @@
   },
   "invocation": "python3 paper_tools/figures/beam/generate_panels.py",
   "sha256": {
-    "generate_panels.py": "0123c909e59941e8fe62e8ed9a7b3e745059341c4a9d5bad51b6fa37294b0cfe",
-    "planar_residual.pdf": "fe301832cef7ec789e883eaa740ed059252197d21eb4040a6023c518e0cf8f20",
+    "generate_panels.py": "160049243071198cfaba79a657829e562d1f69f89a5ad1b7bd8f56e81d76db35",
+    "planar_residual.pdf": "2ff91f4f18329e8fb019b5c1e77ab97babc5b7b1db3c61f3d4e1c07c737ada31",
     "clamped_green.pdf": "de247c2007c1dc2943ed214d2c61a8d4cf9a8933940193ea5e6351b8be301114",
     "angular_profiles.pdf": "4e03b0bb096a8b243332b62475e2e51cf369b81ac629b3032cce8df054f7f325"
   }

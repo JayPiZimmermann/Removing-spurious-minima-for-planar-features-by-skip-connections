@@ -22,13 +22,16 @@ import platform
 import subprocess
 from typing import Iterable, Sequence
 
-import cairo
+try:
+    import cairo  # only the standalone cairo rendering below needs it
+except ImportError:  # the matplotlib panels import this module for its mathematics
+    cairo = None
 
 
 HERE = Path(__file__).resolve().parent
 OUTPUT_PDF = HERE / "zonotope_shift_loses_first_harmonic.pdf"
 OUTPUT_METADATA = HERE / "zonotope_shift_loses_first_harmonic.metadata.json"
-PDF_VERSION = cairo.PDF_VERSION_1_5
+PDF_VERSION = cairo.PDF_VERSION_1_5 if cairo is not None else None
 PDF_HEADER = b"%PDF-1.5"
 
 # Canonical source parameters.  Positive masses are essential for the literal
