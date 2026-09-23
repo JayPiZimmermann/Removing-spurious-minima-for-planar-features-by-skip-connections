@@ -5,8 +5,8 @@ cryptographic proof of correctness: the trusted evidence is the Lean
 source in this repository together with the Lean kernel.  What it fixes
 is exactly which source, toolchain and dependencies were checked.
 
-date (UTC)             : 2026-09-23T09:58:55Z
-commit                 : e6dc5170f86782d2838335d74103b01522e5cd7f
+date (UTC)             : 2026-09-23T12:34:05Z
+commit                 : fe33e955fa4a2a849e9a5a23f2940b5a50f97d0b
 working tree           : clean
 toolchain (lean-toolchain): leanprover/lean4:v4.4.0
 lean --version         : Lean (version 4.4.0, commit ca7d6dadb9e1, Release)
