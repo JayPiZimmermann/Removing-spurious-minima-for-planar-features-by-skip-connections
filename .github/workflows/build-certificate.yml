@@ -1,0 +1,33 @@
+name: build certificate
+
+# Builds the formalization from a clean checkout, audits the five contribution
+# statements and publishes BUILD_CERTIFICATE.txt as a workflow artifact.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch the compiled Mathlib cache
+        run: lake exe cache get
+
+      - name: Build, audit and write the certificate
+        run: |
+          ulimit -s 65536
+          ./scripts/build_certificate.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: BUILD_CERTIFICATE
+          path: BUILD_CERTIFICATE.txt
