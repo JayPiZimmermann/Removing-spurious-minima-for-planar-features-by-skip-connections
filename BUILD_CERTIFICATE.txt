@@ -1,0 +1,36 @@
+BUILD CERTIFICATE
+
+This file records one complete check of the development.  It is not a
+cryptographic proof of correctness: the trusted evidence is the Lean
+source in this repository together with the Lean kernel.  What it fixes
+is exactly which source, toolchain and dependencies were checked.
+
+date (UTC)             : 2026-09-23T09:58:55Z
+commit                 : e6dc5170f86782d2838335d74103b01522e5cd7f
+working tree           : clean
+toolchain (lean-toolchain): leanprover/lean4:v4.4.0
+lean --version         : Lean (version 4.4.0, commit ca7d6dadb9e1, Release)
+lake --version         : Lake version 5.0.0-ca7d6da (Lean version 4.4.0)
+lake-manifest.json     : sha256 c5991e37590c034e8904821543e07575aa2a40daa28d1e6e7aaa04b13b565d7f
+lakefile.lean          : sha256 5a6024ee7de847b3999cfc731279450afba249d513cb61f096c52d7cf4a65950
+
+lake build All         : exit 0  (success)
+modules compiled       : 13 (the whole development; All.lean imports every one)
+'sorry' warnings       : 0
+paper statements       : 44 of 44 reported (Theorems.lean
+                         and Overview_theorems.lean)
+axioms used            : Classical.choice propext Quot.sound
+unexpected axioms      : none
+verify.py              : exit 0  "verified": true
+
+lake build All compiles every module of this repository, and Lean reports
+a remaining sorry only as a warning, which is why those are counted above.
+The axiom sweep prints the transitive axiom dependencies of every paper
+statement; anything beyond propext, Classical.choice and Quot.sound -- in
+particular sorryAx and Lean.ofReduceBool -- is listed as unexpected.  The
+audit additionally elaborates the five contribution theorems against the
+exact statements recorded in verification.json, so a proof of a weaker
+statement cannot pass.
+
+Reproduce with:
+    ./scripts/build_certificate.sh
