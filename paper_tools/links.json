@@ -52,16 +52,6 @@
     },
     {
       "kind": "Equation",
-      "label": "eq:parameter-spaces",
-      "source": {
-        "file": "Preliminaries.lean",
-        "namespace": "PaperLeanFormalization.Preliminaries",
-        "decl": "eq_parameter_spaces"
-      },
-      "scope": "Exact: Both signed parameter cylinders are products of unrestricted real masses and unit spheres, with the additional unrestricted vector factor for linear skip parameters."
-    },
-    {
-      "kind": "Equation",
       "label": "eq:raw-chain-rule",
       "source": {
         "file": "Preliminaries.lean",
@@ -319,86 +309,6 @@
         "decl": "eq_revival_signed"
       },
       "scope": "Specialized: Both signed revival quadratics at a dead unit row in dimension at least two, with centered coefficient 1/8 and plain coefficient 1/4; dimension one is separate."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:kernel-branches",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_kernel_branches"
-      },
-      "scope": "Exact: The complete principal kernel branch identity on the interval from minus pi to pi, excluding its endpoints and including zero, with the indicator and factor two."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-split",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_split"
-      },
-      "scope": "Generalized: Both the causal residual split and the explicit homogeneous part for arbitrary finite signed support strictly between zero and pi."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-residual",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_residual"
-      },
-      "scope": "Generalized: For finite signed support between zero and pi, a zero initial arc forces the homogeneous part to vanish and gives the causal formula on [0, pi)."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-end",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_end"
-      },
-      "scope": "Generalized: Both terminal causal moment sums vanish at a single double zero below pi and beyond all atoms, assuming a zero initial arc."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-positive",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_positive"
-      },
-      "scope": "Generalized: Both causal moment sums over strictly earlier sources vanish at a support double zero, assuming a zero initial arc; source-weight positivity is unnecessary."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-split-y",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_split_y"
-      },
-      "scope": "Generalized: A vanishing causal value sum splits into the first source at y and sources strictly between y and z, for arbitrary weights and y < z."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-split-y-derivative",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_split_y_derivative"
-      },
-      "scope": "Generalized: A vanishing causal derivative sum splits into the first source at y and sources strictly between y and z, using the derivative of the causal kernel."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:causal-elimination",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.ZeroArcCausal",
-        "decl": "eq_causal_elimination"
-      },
-      "scope": "Generalized: Both the vanishing cross-product sum and its quotient factorization, for arbitrary weights and sources strictly between y and z with 0 < z-y < pi."
     },
     {
       "kind": "Equation",

@@ -340,593 +340,6 @@ theorem analytic_kernel_add_linear (K : ℝ → ℝ) (a : ℝ)
 
 end PaperLeanFormalization.SphereContinuation
 
-namespace PaperLeanFormalization.ZeroArcCausal
-
-open BeamGapKernel
-
-def residual (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) : ℝ :=
-  ∑ a in S, ω a * kernel (x-a)
-
-def slope (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) : ℝ :=
-  ∑ a in S, ω a * torque (x-a)
-
-def homogeneous (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) : ℝ :=
-  ∑ a in S, ω a * branch (x+π-a)
-
-def homogeneousD1 (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) : ℝ :=
-  ∑ a in S, ω a * branchD1 (x+π-a)
-
-def homogeneousD2 (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) : ℝ :=
-  ∑ a in S, ω a * branchD2 (x+π-a)
-
-def homogeneousD3 (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) : ℝ :=
-  ∑ a in S, ω a * branchD3 (x+π-a)
-
-/-- `eq:kernel-branches`, including the regular value at the crossing. -/
-theorem eq_kernel_branches {t : ℝ} (ht : -π < t) (htπ : t < π) :
-    kernel t = branch t - 2 * psi t * (if t < 0 then 1 else 0) := by
-  by_cases h : t < 0
-  · rw [if_pos h, mul_one, ← kernel_even t,
-      kernel_eq_branch (by linarith) (by linarith)]
-    simp only [branch, psi, sin_neg, cos_neg]
-    ring
-  · rw [if_neg h, mul_zero, sub_zero]
-    exact kernel_eq_branch (le_of_not_gt h) htπ.le
-
-/-- `eq:causal-split`: the complete smooth continuation and the causal tail. -/
-theorem eq_causal_split (S : Finset ℝ) (ω : ℝ → ℝ)
-    (hS : ∀ a ∈ S, 0 < a ∧ a < π) {x : ℝ} (hx : 0 ≤ x) (hxπ : x < π) :
-    residual S ω x = homogeneous S ω x +
-      2 * ∑ a in S.filter (fun a => a ≤ x), ω a * psi (x-a) ∧
-    homogeneous S ω x = ∑ a in S, ω a * (branch (x-a)-2*psi (x-a)) := by
-  classical
-  have hH : homogeneous S ω x =
-      ∑ a in S, ω a * (branch (x-a)-2*psi (x-a)) := by
-    unfold homogeneous
-    apply Finset.sum_congr rfl
-    intro a _
-    have h := branch_crossing (x-a)
-    rw [show x-a+π=x+π-a by ring] at h
-    congr 1
-    linarith only [h]
-  refine ⟨?_, hH⟩
-  rw [hH, Finset.sum_filter, Finset.mul_sum, ← Finset.sum_add_distrib]
-  unfold residual
-  apply Finset.sum_congr rfl
-  intro a ha
-  rw [eq_kernel_branches (by linarith [(hS a ha).2]) (by linarith [(hS a ha).1])]
-  by_cases hax : a ≤ x
-  · simp only [if_pos hax, if_neg (not_lt_of_ge (sub_nonneg.mpr hax))]
-    ring
-  · simp only [if_neg hax, if_pos (sub_neg.mpr (lt_of_not_ge hax))]
-    ring
-
-private theorem branch_derivative (x : ℝ) : HasDerivAt branch (branchD1 x) x := by
-  convert (hasDerivAt_sin x).add (((hasDerivAt_const x (π/2)).sub
-    (hasDerivAt_id x)).mul (hasDerivAt_cos x)) using 1
-  dsimp [branch, branchD1]
-  ring
-
-private theorem branchD1_derivative (x : ℝ) : HasDerivAt branchD1 (branchD2 x) x := by
-  convert ((hasDerivAt_id x).sub_const (π/2)).mul (hasDerivAt_sin x) using 1
-  dsimp [branchD1, branchD2]
-  ring
-
-private theorem branchD2_derivative (x : ℝ) : HasDerivAt branchD2 (branchD3 x) x := by
-  convert (hasDerivAt_sin x).add (((hasDerivAt_id x).sub_const
-    (π/2)).mul (hasDerivAt_cos x)) using 1
-  dsimp [branchD2, branchD3]
-  ring
-
-private theorem weighted_shift_derivative (S : Finset ℝ) (ω f f' : ℝ → ℝ)
-    (hf : ∀ x, HasDerivAt f (f' x) x) (x : ℝ) :
-    HasDerivAt (fun t => ∑ a in S, ω a * f (t+π-a))
-      (∑ a in S, ω a * f' (x+π-a)) x := by
-  apply HasDerivAt.sum
-  intro a _
-  simpa using ((hf (x+π-a)).comp x
-    (((hasDerivAt_id x).add_const π).sub_const a)).const_mul (ω a)
-
-/-- The smooth beam continuation is determined by four jets. This elementary
-finite-dimensional proof supplies the analytic-continuation conclusion without
-requiring a separate analytic library for real sine and cosine. -/
-theorem homogeneous_vanishes_of_open_zero (S : Finset ℝ) (ω : ℝ → ℝ) {z : ℝ}
-    (hz : homogeneous S ω =ᶠ[𝓝 z] (fun _ => (0 : ℝ))) : ∀ x, homogeneous S ω x = 0 := by
-  have hd0 (x) : HasDerivAt (homogeneous S ω) (homogeneousD1 S ω x) x :=
-    weighted_shift_derivative S ω branch branchD1 branch_derivative x
-  have hd1 (x) : HasDerivAt (homogeneousD1 S ω) (homogeneousD2 S ω x) x :=
-    weighted_shift_derivative S ω branchD1 branchD2 branchD1_derivative x
-  have hd2 (x) : HasDerivAt (homogeneousD2 S ω) (homogeneousD3 S ω x) x :=
-    weighted_shift_derivative S ω branchD2 branchD3 branchD2_derivative x
-  have hz0 : homogeneous S ω z = 0 := hz.self_of_nhds
-  have hz1 : homogeneousD1 S ω =ᶠ[𝓝 z] (fun _ => (0 : ℝ)) := by
-    filter_upwards [hz.deriv] with x hx
-    simpa only [(hd0 x).deriv, deriv_const, Pi.zero_apply] using hx
-  have hz2 : homogeneousD2 S ω =ᶠ[𝓝 z] (fun _ => (0 : ℝ)) := by
-    filter_upwards [hz1.deriv] with x hx
-    simpa only [(hd1 x).deriv, deriv_const, Pi.zero_apply] using hx
-  have hz3 : homogeneousD3 S ω z = 0 := by
-    have h := hz2.deriv_eq
-    simpa only [(hd2 z).deriv, deriv_const, Pi.zero_apply] using h
-  have hsin : (∑ a in S, ω a * sin (z+π-a)) = 0 := by
-    have heq : homogeneousD2 S ω z + homogeneous S ω z =
-        2 * ∑ a in S, ω a * sin (z+π-a) := by
-      unfold homogeneousD2 homogeneous
-      rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun a _ => by dsimp [branchD2, branch]; ring
-    rw [hz2.self_of_nhds, hz0] at heq
-    dsimp only at heq
-    linarith only [heq]
-  have hcos : (∑ a in S, ω a * cos (z+π-a)) = 0 := by
-    have heq : homogeneousD3 S ω z + homogeneousD1 S ω z =
-        2 * ∑ a in S, ω a * cos (z+π-a) := by
-      unfold homogeneousD3 homogeneousD1
-      rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun a _ => by dsimp [branchD3, branchD1]; ring
-    rw [hz3, hz1.self_of_nhds] at heq
-    dsimp only at heq
-    linarith only [heq]
-  intro x
-  have heq : homogeneous S ω x =
-      homogeneous S ω z * cos (x-z) + homogeneousD1 S ω z * sin (x-z) +
-      (∑ a in S, ω a * cos (z+π-a)) * psi (x-z) +
-      (∑ a in S, ω a * sin (z+π-a)) * chi (x-z) := by
-    unfold homogeneous homogeneousD1
-    simp only [Finset.sum_mul, ← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl
-    intro a _
-    rw [show x+π-a=(x-z)+(z+π-a) by ring, branch_shift]
-    ring
-  rw [heq, hz0, hz1.self_of_nhds, hcos, hsin]
-  ring
-
-/-- `eq:causal-residual`: a zero start interval eliminates the entire smooth
-continuation, leaving only atoms at or to the left of the evaluation point. -/
-theorem eq_causal_residual (S : Finset ℝ) (ω : ℝ → ℝ) {ε : ℝ} (hε : 0 < ε)
-    (hS : ∀ a ∈ S, ε ≤ a ∧ a < π)
-    (hstart : ∀ x, 0 < x → x < ε → residual S ω x = 0) :
-    (∀ x, homogeneous S ω x = 0) ∧
-    (∀ x, 0 ≤ x → x < π → residual S ω x =
-      2 * ∑ a in S.filter (fun a => a ≤ x), ω a * psi (x-a)) := by
-  have hS' : ∀ a ∈ S, 0 < a ∧ a < π := fun a ha =>
-    ⟨hε.trans_le (hS a ha).1, (hS a ha).2⟩
-  have hnear : homogeneous S ω =ᶠ[𝓝 (ε/2)] (fun _ => (0 : ℝ)) := by
-    filter_upwards [Ioo_mem_nhds (show 0 < ε/2 by linarith)
-      (show ε/2 < ε by linarith)] with x hx
-    by_cases hxπ : x < π
-    · have hfilt : S.filter (fun a => a ≤ x) = ∅ := by
-        apply Finset.eq_empty_iff_forall_not_mem.mpr
-        intro a ha
-        have hp := Finset.mem_filter.mp ha
-        linarith [(hS a hp.1).1, hp.2, hx.2]
-      have h := (eq_causal_split S ω hS' hx.1.le hxπ).1
-      rw [hfilt, Finset.sum_empty, mul_zero, add_zero, hstart x hx.1 hx.2] at h
-      exact h.symm
-    · have hempty : S = ∅ := by
-        apply Finset.eq_empty_iff_forall_not_mem.mpr
-        intro a ha
-        linarith [(hS a ha).1, (hS a ha).2, hx.2]
-      simp [homogeneous, hempty]
-  have hH := homogeneous_vanishes_of_open_zero S ω hnear
-  refine ⟨hH, ?_⟩
-  intro x hx hxπ
-  simpa only [hH x, zero_add] using (eq_causal_split S ω hS' hx hxπ).1
-
-private theorem slope_causal (S : Finset ℝ) (ω : ℝ → ℝ)
-    (hS : ∀ a ∈ S, 0 < a ∧ a < π)
-    (hH : ∀ x, homogeneous S ω x = 0) {x : ℝ} (hx : 0 ≤ x) (hxπ : x < π) :
-    slope S ω x = 2 * ∑ a in S.filter (fun a => a ≤ x), ω a * chi (x-a) := by
-  classical
-  have hH1 : homogeneousD1 S ω x = 0 := by
-    have hd := weighted_shift_derivative S ω branch branchD1 branch_derivative x
-    have heq : (fun t => ∑ a in S, ω a * branch (t+π-a)) = fun _ => (0 : ℝ) :=
-      funext hH
-    rw [heq] at hd
-    exact hd.unique (hasDerivAt_const x 0)
-  have heq : slope S ω x = homogeneousD1 S ω x +
-      2 * ∑ a in S.filter (fun a => a ≤ x), ω a * chi (x-a) := by
-    unfold slope homogeneousD1
-    rw [Finset.sum_filter, Finset.mul_sum, ← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl
-    intro a ha
-    rw [torque_gap_branch hx hxπ.le (hS a ha).1.le (hS a ha).2.le]
-    simp only [offset, if_neg (ne_of_gt (hS a ha).1), (hS a ha).1, true_and]
-    rw [show x+(π-a)=x+π-a by ring]
-    split_ifs <;> ring
-  simpa only [hH1, zero_add] using heq
-
-private theorem filtered_sum_strict (S : Finset ℝ) (ω f : ℝ → ℝ)
-    (hf : f 0 = 0) (x : ℝ) :
-    (∑ a in S.filter (fun a => a ≤ x), ω a * f (x-a)) =
-      ∑ a in S.filter (fun a => a < x), ω a * f (x-a) := by
-  classical
-  rw [Finset.sum_filter, Finset.sum_filter]
-  apply Finset.sum_congr rfl
-  intro a _
-  by_cases ha : a < x
-  · simp only [ha, ha.le, if_true]
-  · by_cases hax : a = x
-    · subst a
-      simp [hf]
-    · simp only [ha, if_false, if_neg (fun h => hax (le_antisymm h (le_of_not_gt ha)))]
-
-/-- `eq:causal-positive`: a positive support point supplies the two causal
-equations with its own zero-valued source removed. -/
-theorem eq_causal_positive (S : Finset ℝ) (ω : ℝ → ℝ) {ε y : ℝ}
-    (hε : 0 < ε) (hS : ∀ a ∈ S, ε ≤ a ∧ a < π)
-    (hstart : ∀ x, 0 < x → x < ε → residual S ω x = 0)
-    (hy : y ∈ S) (hzero : residual S ω y = 0) (hderiv : slope S ω y = 0) :
-    (∑ a in S.filter (fun a => a < y), ω a * psi (y-a)) = 0 ∧
-    (∑ a in S.filter (fun a => a < y), ω a * chi (y-a)) = 0 := by
-  have hR := eq_causal_residual S ω hε hS hstart
-  have hS' : ∀ a ∈ S, 0 < a ∧ a < π := fun a ha =>
-    ⟨hε.trans_le (hS a ha).1, (hS a ha).2⟩
-  have hv := hR.2 y (hS' y hy).1.le (hS' y hy).2
-  have hd := slope_causal S ω hS' hR.1 (hS' y hy).1.le (hS' y hy).2
-  rw [hzero, filtered_sum_strict S ω psi (by simp [psi])] at hv
-  rw [hderiv, filtered_sum_strict S ω chi (by simp [chi])] at hd
-  constructor <;> linarith only [hv, hd]
-
-/-- `eq:causal-end`: at a zero endpoint beyond every atom all terms are present. -/
-theorem eq_causal_end (S : Finset ℝ) (ω : ℝ → ℝ) {ε x : ℝ}
-    (hε : 0 < ε) (hS : ∀ a ∈ S, ε ≤ a ∧ a < x) (hx : 0 ≤ x) (hxπ : x < π)
-    (hstart : ∀ t, 0 < t → t < ε → residual S ω t = 0)
-    (hzero : residual S ω x = 0) (hderiv : slope S ω x = 0) :
-    (∑ a in S, ω a * psi (x-a)) = 0 ∧ (∑ a in S, ω a * chi (x-a)) = 0 := by
-  have hSπ : ∀ a ∈ S, ε ≤ a ∧ a < π := fun a ha =>
-    ⟨(hS a ha).1, (hS a ha).2.trans hxπ⟩
-  have hR := eq_causal_residual S ω hε hSπ hstart
-  have hS' : ∀ a ∈ S, 0 < a ∧ a < π := fun a ha =>
-    ⟨hε.trans_le (hSπ a ha).1, (hSπ a ha).2⟩
-  have hfilt : S.filter (fun a => a ≤ x) = S :=
-    Finset.filter_true_of_mem fun a ha => (hS a ha).2.le
-  have hv := hR.2 x hx hxπ
-  have hd := slope_causal S ω hS' hR.1 hx hxπ
-  rw [hfilt, hzero] at hv
-  rw [hfilt, hderiv] at hd
-  constructor <;> linarith only [hv, hd]
-
-theorem residual_hasDerivAt (S : Finset ℝ) (ω : ℝ → ℝ) (x : ℝ) :
-    HasDerivAt (residual S ω) (slope S ω x) x := by
-  apply HasDerivAt.sum
-  intro a _
-  have h : HasDerivAt kernel (torque (x-a)) (x-a) :=
-    KernelCalculus.hasDerivAt_angularKernel (x-a)
-  simpa using (h.comp x ((hasDerivAt_id x).sub_const a)).const_mul (ω a)
-
-theorem slope_zero_of_open_zero (S : Finset ℝ) (ω : ℝ → ℝ) {x : ℝ}
-    (hzero : residual S ω =ᶠ[𝓝 x] (fun _ => (0 : ℝ))) : slope S ω x = 0 := by
-  have h := hzero.deriv_eq
-  simpa only [(residual_hasDerivAt S ω x).deriv, deriv_const] using h
-
-private theorem chi_positive {x : ℝ} (hx : 0 < x) (hxπ : x < π) : 0 < chi x :=
-  mul_pos hx (sin_pos_of_pos_of_lt_pi hx hxπ)
-
-/-- The quotient derivative used in `eq:causal-elimination`. -/
-theorem psi_ratio_derivative {x : ℝ} (hx : 0 < x) (hxπ : x < π) :
-    HasDerivAt (fun t => psi t / chi t)
-      ((x^2-sin x^2)/(chi x)^2) x := by
-  convert (Planar.Gaps.psi_derivative x).div (Planar.Gaps.chi_derivative x)
-    (ne_of_gt (chi_positive hx hxπ)) using 1
-  congr 1
-  dsimp only [Planar.Gaps.psi, Planar.Gaps.chi]
-  linear_combination -x^2 * (sin_sq_add_cos_sq x)
-
-theorem psi_ratio_strictMono : StrictMonoOn (fun x => psi x / chi x) (Ioo 0 π) := by
-  apply (convex_Ioo (0 : ℝ) π).strictMonoOn_of_deriv_pos
-  · intro x hx
-    exact (psi_ratio_derivative hx.1 hx.2).continuousAt.continuousWithinAt
-  · intro x hx
-    have hx' := interior_subset hx
-    rw [(psi_ratio_derivative hx'.1 hx'.2).deriv]
-    apply div_pos
-    · exact Planar.Gaps.det_positive hx'.1 hx'.2.le
-    · exact sq_pos_of_pos (chi_positive hx'.1 hx'.2)
-
-private theorem cross_negative {u v : ℝ} (hu : 0 < u) (huv : u < v) (hvπ : v < π) :
-    psi u * chi v - chi u * psi v < 0 := by
-  have h := psi_ratio_strictMono ⟨hu, huv.trans hvπ⟩ ⟨hu.trans huv, hvπ⟩ huv
-  have hc := (div_lt_div_iff (chi_positive hu (huv.trans hvπ))
-    (chi_positive (hu.trans huv) hvπ)).mp h
-  nlinarith only [hc]
-
-private theorem split_first_source (S : Finset ℝ) (ω f : ℝ → ℝ) {y z : ℝ}
-    (hy : y ∈ S) (hyz : y < z) (hfirst : ∀ a ∈ S, y ≤ a)
-    (hzero : (∑ a in S.filter (fun a => a < z), ω a * f (z-a)) = 0) :
-    ω y * f (z-y) + (∑ a in S.filter (fun a => y < a ∧ a < z), ω a * f (z-a)) = 0 := by
-  classical
-  have hmem : y ∈ S.filter (fun a => a < z) := Finset.mem_filter.mpr ⟨hy, hyz⟩
-  have herase : (S.filter (fun a => a < z)).erase y =
-      S.filter (fun a => y < a ∧ a < z) := by
-    ext a
-    simp only [Finset.mem_erase, Finset.mem_filter]
-    constructor
-    · rintro ⟨hne, ha, haz⟩
-      exact ⟨ha, lt_of_le_of_ne (hfirst a ha) (Ne.symm hne), haz⟩
-    · rintro ⟨ha, hya, haz⟩
-      exact ⟨hya.ne', ha, haz⟩
-  have h := Finset.add_sum_erase (S.filter (fun a => a < z))
-    (fun a => ω a * f (z-a)) hmem
-  rw [herase, hzero] at h
-  exact h
-
-/-- `eq:causal-split-y`: split the first positive source from the later negative
-sources, using the absence of all sources before it. -/
-theorem eq_causal_split_y (S : Finset ℝ) (ω : ℝ → ℝ) {y z : ℝ}
-    (hy : y ∈ S) (hyz : y < z) (hfirst : ∀ a ∈ S, y ≤ a)
-    (hzero : (∑ a in S.filter (fun a => a < z), ω a * psi (z-a)) = 0) :
-    ω y * psi (z-y) + (∑ a in S.filter (fun a => y < a ∧ a < z),
-      ω a * psi (z-a)) = 0 := split_first_source S ω psi hy hyz hfirst hzero
-
-/-- `eq:causal-split-y-derivative`, the same finite split for `psi' = chi`. -/
-theorem eq_causal_split_y_derivative (S : Finset ℝ) (ω : ℝ → ℝ) {y z : ℝ}
-    (hy : y ∈ S) (hyz : y < z) (hfirst : ∀ a ∈ S, y ≤ a)
-    (hzero : (∑ a in S.filter (fun a => a < z), ω a * chi (z-a)) = 0) :
-    ω y * chi (z-y) + (∑ a in S.filter (fun a => y < a ∧ a < z),
-      ω a * chi (z-a)) = 0 := split_first_source S ω chi hy hyz hfirst hzero
-
-/-- `eq:causal-elimination`: the first positive source cancels, and the
-remaining cross-product factors into the strict quotient difference. -/
-theorem eq_causal_elimination (T : Finset ℝ) (ω : ℝ → ℝ) (p y z : ℝ)
-    (hT : ∀ a ∈ T, y < a ∧ a < z) (hyz : y < z) (hl : z-y < π)
-    (hval : p*psi (z-y)+(∑ a in T, ω a*psi (z-a)) = 0)
-    (hder : p*chi (z-y)+(∑ a in T, ω a*chi (z-a)) = 0) :
-    (∑ a in T, ω a * (psi (z-a)*chi (z-y)-chi (z-a)*psi (z-y))) = 0 ∧
-    (∑ a in T, ω a * (psi (z-a)*chi (z-y)-chi (z-a)*psi (z-y))) =
-      ∑ a in T, ω a * chi (z-a) * chi (z-y) *
-        (psi (z-a)/chi (z-a)-psi (z-y)/chi (z-y)) := by
-  constructor
-  · calc
-      _ = (∑ a in T, ω a*psi (z-a))*chi (z-y) -
-          (∑ a in T, ω a*chi (z-a))*psi (z-y) := by
-        rw [Finset.sum_mul, Finset.sum_mul, ← Finset.sum_sub_distrib]
-        exact Finset.sum_congr rfl fun a _ => by ring
-      _ = (p*psi (z-y)+(∑ a in T, ω a*psi (z-a)))*chi (z-y) -
-          (p*chi (z-y)+(∑ a in T, ω a*chi (z-a)))*psi (z-y) := by
-        ring
-      _ = 0 := by rw [hval, hder]; ring
-  · apply Finset.sum_congr rfl
-    intro a ha
-    have hca : chi (z-a) ≠ 0 := ne_of_gt (chi_positive (sub_pos.mpr (hT a ha).2)
-      (by linarith [(hT a ha).1]))
-    have hcl : chi (z-y) ≠ 0 := ne_of_gt (chi_positive (sub_pos.mpr hyz) hl)
-    field_simp [hca, hcl]
-    ring
-
-/-- The full finite causal rigidity argument. `xstar` lies on the final zero
-arc, after every atom. The nonnegative-teacher hypothesis is needed only by
-the caller that supplies the double zeros of positive net masses. -/
-theorem no_support_of_zero_start_and_double_zeros
-    (S : Finset ℝ) (ω : ℝ → ℝ) {ε xstar : ℝ} (hε : 0 < ε)
-    (hS : ∀ a ∈ S, ε ≤ a ∧ a < xstar) (hxπ : xstar < π)
-    (hne : ∀ a ∈ S, ω a ≠ 0)
-    (hstart : ∀ x, 0 < x → x < ε → residual S ω x = 0)
-    (hend : residual S ω xstar = 0) (hendD : slope S ω xstar = 0)
-    (hpositive : ∀ a ∈ S, 0 < ω a → residual S ω a = 0 ∧ slope S ω a = 0) :
-    S = ∅ := by
-  classical
-  by_contra hnonempty
-  have hSnonempty : S.Nonempty := Finset.nonempty_iff_ne_empty.mpr hnonempty
-  obtain ⟨a0, ha0⟩ := hSnonempty
-  have hSnonempty : S.Nonempty := ⟨a0, ha0⟩
-  have hxpos : 0 < xstar := hε.trans_le ((hS a0 ha0).1) |>.trans (hS a0 ha0).2
-  have hSπ : ∀ a ∈ S, ε ≤ a ∧ a < π := fun a ha =>
-    ⟨(hS a ha).1, (hS a ha).2.trans hxπ⟩
-  have hEnd := eq_causal_end S ω hε hS hxpos.le hxπ hstart hend hendD
-  let P := S.filter (fun a => 0 < ω a)
-  have hP : P.Nonempty := by
-    by_contra hnone
-    have hnegative (a : ℝ) (ha : a ∈ S) : ω a < 0 := by
-      have hnot : ¬0 < ω a := fun hp => hnone ⟨a, Finset.mem_filter.mpr ⟨ha, hp⟩⟩
-      exact lt_of_le_of_ne (le_of_not_gt hnot) (hne a ha)
-    have hsumneg : (∑ a in S, ω a * psi (xstar-a)) < 0 := by
-      apply Finset.sum_neg _ hSnonempty
-      intro a ha
-      apply mul_neg_of_neg_of_pos (hnegative a ha)
-      exact Planar.Gaps.psi_positive (sub_pos.mpr (hS a ha).2)
-        (by linarith [(hS a ha).1])
-    rw [hEnd.1] at hsumneg
-    exact (lt_irrefl 0) hsumneg
-  let y := P.min' hP
-  have hyP : y ∈ P := P.min'_mem hP
-  have hyS : y ∈ S := (Finset.mem_filter.mp hyP).1
-  have hypos : 0 < ω y := (Finset.mem_filter.mp hyP).2
-  have hymin (a : ℝ) (ha : a ∈ P) : y ≤ a := P.min'_le a ha
-  have hyzero := hpositive y hyS hypos
-  have hY := eq_causal_positive S ω hε hSπ hstart hyS hyzero.1 hyzero.2
-  have hnegativeBefore (a : ℝ) (ha : a ∈ S) (hay : a < y) : ω a < 0 := by
-    have hnot : ¬0 < ω a := by
-      intro hp
-      exact (not_le_of_gt hay) (hymin a (Finset.mem_filter.mpr ⟨ha, hp⟩))
-    exact lt_of_le_of_ne (le_of_not_gt hnot) (hne a ha)
-  have hyfirst (a : ℝ) (ha : a ∈ S) : y ≤ a := by
-    by_contra hnot
-    have hay : a < y := lt_of_not_ge hnot
-    have hbeforeNonempty : (S.filter (fun b => b < y)).Nonempty :=
-      ⟨a, Finset.mem_filter.mpr ⟨ha, hay⟩⟩
-    have hsumneg : (∑ b in S.filter (fun b => b < y), ω b * psi (y-b)) < 0 := by
-      apply Finset.sum_neg _ hbeforeNonempty
-      intro b hb
-      have hb' := Finset.mem_filter.mp hb
-      apply mul_neg_of_neg_of_pos (hnegativeBefore b hb'.1 hb'.2)
-      exact Planar.Gaps.psi_positive (sub_pos.mpr hb'.2)
-        (by linarith [(hSπ b hb'.1).1, (hSπ y hyS).2])
-    rw [hY.1] at hsumneg
-    exact (lt_irrefl 0) hsumneg
-  let R := insert xstar (P.filter (fun a => y < a))
-  have hR : R.Nonempty := ⟨xstar, Finset.mem_insert_self _ _⟩
-  let z := R.min' hR
-  have hzR : z ∈ R := R.min'_mem hR
-  have hzEnd : z ≤ xstar := R.min'_le xstar (Finset.mem_insert_self _ _)
-  have hyz : y < z := by
-    rcases Finset.mem_insert.mp hzR with hz | hz
-    · rw [hz]
-      exact (hS y hyS).2
-    · exact (Finset.mem_filter.mp hz).2
-  have hzπ : z-y < π := by linarith [(hS y hyS).1]
-  have hZ : (∑ a in S.filter (fun a => a < z), ω a * psi (z-a)) = 0 ∧
-      (∑ a in S.filter (fun a => a < z), ω a * chi (z-a)) = 0 := by
-    rcases Finset.mem_insert.mp hzR with hz | hz
-    · rw [hz]
-      have hfilt : S.filter (fun a => a < xstar) = S :=
-        Finset.filter_true_of_mem fun a ha => (hS a ha).2
-      simpa only [hfilt] using hEnd
-    · have hzP := (Finset.mem_filter.mp hz).1
-      have hzS := (Finset.mem_filter.mp hzP).1
-      have hzpos := (Finset.mem_filter.mp hzP).2
-      exact eq_causal_positive S ω hε hSπ hstart hzS
-        (hpositive z hzS hzpos).1 (hpositive z hzS hzpos).2
-  let T := S.filter (fun a => y < a ∧ a < z)
-  have hT (a : ℝ) (ha : a ∈ T) : y < a ∧ a < z := (Finset.mem_filter.mp ha).2
-  have hTnegative (a : ℝ) (ha : a ∈ T) : ω a < 0 := by
-    have haS := (Finset.mem_filter.mp ha).1
-    have hnot : ¬0 < ω a := by
-      intro hp
-      have haR : a ∈ R := Finset.mem_insert_of_mem
-        (Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨haS, hp⟩, (hT a ha).1⟩)
-      exact (not_le_of_gt (hT a ha).2) (R.min'_le a haR)
-    exact lt_of_le_of_ne (le_of_not_gt hnot) (hne a haS)
-  have hval := eq_causal_split_y S ω hyS hyz hyfirst hZ.1
-  have hder := eq_causal_split_y_derivative S ω hyS hyz hyfirst hZ.2
-  have hElim := eq_causal_elimination T ω (ω y) y z hT hyz hzπ hval hder
-  have hratioZero := hElim.2.symm.trans hElim.1
-  have hTempty : T = ∅ := by
-    by_contra hTne
-    have hsumpos : (∑ a in T, ω a * chi (z-a) * chi (z-y) *
-        (psi (z-a)/chi (z-a)-psi (z-y)/chi (z-y))) > 0 := by
-      apply Finset.sum_pos _ (Finset.nonempty_iff_ne_empty.mpr hTne)
-      intro a ha
-      have hshort : 0 < z-a := sub_pos.mpr (hT a ha).2
-      have hlen : z-a < z-y := by linarith [(hT a ha).1]
-      have hratio := psi_ratio_strictMono ⟨hshort, hlen.trans hzπ⟩
-        ⟨sub_pos.mpr hyz, hzπ⟩ hlen
-      exact mul_pos_of_neg_of_neg
-        (mul_neg_of_neg_of_pos
-          (mul_neg_of_neg_of_pos (hTnegative a ha) (chi_positive hshort (hlen.trans hzπ)))
-          (chi_positive (sub_pos.mpr hyz) hzπ))
-        (sub_neg.mpr hratio)
-    rw [hratioZero] at hsumpos
-    exact (lt_irrefl 0) hsumpos
-  change ω y * psi (z-y) + ∑ a in T, ω a * psi (z-a) = 0 at hval
-  rw [hTempty, Finset.sum_empty, add_zero] at hval
-  exact (mul_pos hypos (Planar.Gaps.psi_positive (sub_pos.mpr hyz) hzπ.le)).ne' hval
-
-/-- The only use of nonnegative teacher masses in the planar propagation
-argument: a positive net mass is carried by an actual positive student. -/
-theorem positive_net_weight_has_positive_student {n m : ℕ}
-    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
-    (y : ℝ) (hy : 0 < Planar.netWeight c theta s beta y) :
-    ∃ i, theta i = y ∧ 0 < c i := by
-  classical
-  by_contra hnone
-  have hstudent : (∑ i in Finset.univ.filter (fun i => theta i = y), c i) ≤ 0 := by
-    apply Finset.sum_nonpos
-    intro i hi
-    exact le_of_not_gt (fun hp => hnone ⟨i, (Finset.mem_filter.mp hi).2, hp⟩)
-  have hteacher : 0 ≤ ∑ k in Finset.univ.filter (fun k => beta k = y), s k :=
-    Finset.sum_nonneg fun k _ => hs k
-  unfold Planar.netWeight at hy
-  linarith only [hy, hstudent, hteacher]
-
-end PaperLeanFormalization.ZeroArcCausal
-
-namespace PaperLeanFormalization.ZeroArcCausal
-
-/-- The support contains each geometric line once and removes exactly the
-zero net weights, including cancellations between coincident neurons. -/
-def netSupport {n m : ℕ} (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) : Finset ℝ :=
-  (Finset.univ.image theta ∪ Finset.univ.image beta).filter
-    (fun a => Planar.netWeight c theta s beta a ≠ 0)
-
-private theorem discard_zero_weights (A : Finset ℝ) (ω f : ℝ → ℝ) :
-    (∑ a in A.filter (fun a => ω a ≠ 0), ω a * f a) = ∑ a in A, ω a * f a := by
-  classical
-  rw [Finset.sum_filter]
-  apply Finset.sum_congr rfl
-  intro a _
-  by_cases ha : ω a = 0 <;> simp [ha]
-
-/-- Grouping and deletion of zero net weights preserve the literal finite
-kernel residual. This identity holds at every angle, not only in the cut. -/
-theorem net_residual_eq {n m : ℕ} (c theta : Fin n → ℝ) (s beta : Fin m → ℝ)
-    (x : ℝ) :
-    residual (netSupport c theta s beta) (Planar.netWeight c theta s beta) x =
-      Planar.residual c theta s beta x := by
-  unfold residual netSupport
-  rw [discard_zero_weights]
-  exact (Planar.residual_eq_sum_netWeight c theta s beta x).symm
-
-/-- The grouped torque is the derivative of the same actual residual, by the
-finite kernel derivative and uniqueness of differentiation. -/
-theorem net_slope_eq {n m : ℕ} (c theta : Fin n → ℝ) (s beta : Fin m → ℝ)
-    (x : ℝ) :
-    slope (netSupport c theta s beta) (Planar.netWeight c theta s beta) x =
-      deriv (Planar.residual c theta s beta) x := by
-  have h := residual_hasDerivAt (netSupport c theta s beta)
-    (Planar.netWeight c theta s beta) x
-  have heq : residual (netSupport c theta s beta) (Planar.netWeight c theta s beta) =
-      Planar.residual c theta s beta := funext (net_residual_eq c theta s beta)
-  rw [heq] at h
-  exact h.deriv.symm
-
-/-- The canonical-cut propagation theorem for the actual network residual.
-The hypotheses are the concrete geometric cut, its zero start/end pieces, and
-ordinary mass/angular stationarity. The nonnegative-teacher condition is used
-only to identify a positive student on every positive net line. -/
-theorem canonical_zero_arc_residual_zero {n m : ℕ}
-    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
-    {ε xstar : ℝ} (hε : 0 < ε) (hxπ : xstar < Real.pi)
-    (htheta : ∀ i, ε ≤ theta i ∧ theta i < xstar)
-    (hbeta : ∀ k, ε ≤ beta k ∧ beta k < xstar)
-    (hstart : ∀ x, 0 < x → x < ε → Planar.residual c theta s beta x = 0)
-    (hend : Planar.residual c theta s beta xstar = 0)
-    (hendD : deriv (Planar.residual c theta s beta) xstar = 0)
-    (hcrit : fderiv ℝ (Planar.variableLoss s beta) (c, theta) = 0) :
-    ∀ x, Planar.residual c theta s beta x = 0 := by
-  classical
-  let S := netSupport c theta s beta
-  let ω := Planar.netWeight c theta s beta
-  have hS (a : ℝ) (ha : a ∈ S) : ε ≤ a ∧ a < xstar := by
-    have ha' := (Finset.mem_filter.mp ha).1
-    rcases Finset.mem_union.mp ha' with hstudent | hteacher
-    · obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hstudent
-      exact htheta i
-    · obtain ⟨k, _, rfl⟩ := Finset.mem_image.mp hteacher
-      exact hbeta k
-  have hne (a : ℝ) (ha : a ∈ S) : ω a ≠ 0 := (Finset.mem_filter.mp ha).2
-  have hpositive (a : ℝ) (_ha : a ∈ S) (ha : 0 < ω a) :
-      residual S ω a = 0 ∧ slope S ω a = 0 := by
-    obtain ⟨i, hi, hci⟩ := positive_net_weight_has_positive_student c theta s beta hs a ha
-    have hdouble := Planar.critical_point_double_zero hcrit i (ne_of_gt hci)
-    rw [hi] at hdouble
-    exact ⟨(net_residual_eq c theta s beta a).trans hdouble.1,
-      (net_slope_eq c theta s beta a).trans hdouble.2⟩
-  have hempty : S = ∅ := no_support_of_zero_start_and_double_zeros S ω hε hS hxπ hne
-    (fun x hx hxe => (net_residual_eq c theta s beta x).trans (hstart x hx hxe))
-    ((net_residual_eq c theta s beta xstar).trans hend)
-    ((net_slope_eq c theta s beta xstar).trans hendD) hpositive
-  intro x
-  rw [← net_residual_eq]
-  change residual S ω x = 0
-  simp only [hempty, residual, Finset.sum_empty]
-
-/-- An actual local minimum supplies ordinary stationarity, and an end open
-zero interval supplies both endpoint equations. This is the form used after
-cutting and rotating the sphere patch into canonical planar angles. -/
-theorem canonical_zero_arc_residual_zero_of_local_min {n m : ℕ}
-    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
-    {ε xstar : ℝ} (hε : 0 < ε) (hxπ : xstar < Real.pi)
-    (htheta : ∀ i, ε ≤ theta i ∧ theta i < xstar)
-    (hbeta : ∀ k, ε ≤ beta k ∧ beta k < xstar)
-    (hstart : ∀ x, 0 < x → x < ε → Planar.residual c theta s beta x = 0)
-    (hend : Planar.residual c theta s beta =ᶠ[𝓝 xstar] (fun _ => (0 : ℝ)))
-    (hmin : IsLocalMin (Planar.variableLoss s beta) (c, theta)) :
-    ∀ x, Planar.residual c theta s beta x = 0 := by
-  apply canonical_zero_arc_residual_zero c theta s beta hs hε hxπ htheta hbeta hstart
-    hend.self_of_nhds _ hmin.fderiv_eq_zero
-  simpa only [deriv_const] using hend.deriv_eq
-
-end PaperLeanFormalization.ZeroArcCausal
 
 namespace PaperLeanFormalization.PairKernelJet
 
@@ -3535,6 +2948,230 @@ theorem residual_common_angle_translation {n m : ℕ}
   unfold Planar.residual
   simp only [show ∀ a : ℝ, x - (a-t) = t+x-a by intro a; ring]
 
+/-- The only use of nonnegative teacher masses in the planar propagation
+argument: a positive net mass is carried by an actual positive student. -/
+theorem positive_net_weight_has_positive_student {n m : ℕ}
+    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
+    (y : ℝ) (hy : 0 < Planar.netWeight c theta s beta y) :
+    ∃ i, theta i = y ∧ 0 < c i := by
+  classical
+  by_contra hnone
+  have hstudent : (∑ i in Finset.univ.filter (fun i => theta i = y), c i) ≤ 0 := by
+    apply Finset.sum_nonpos
+    intro i hi
+    exact le_of_not_gt (fun hp => hnone ⟨i, (Finset.mem_filter.mp hi).2, hp⟩)
+  have hteacher : 0 ≤ ∑ k in Finset.univ.filter (fun k => beta k = y), s k :=
+    Finset.sum_nonneg fun k _ => hs k
+  unfold Planar.netWeight at hy
+  linarith only [hy, hstudent, hteacher]
+
+/-- Shifting every angle by `t` and reducing modulo `π` transports the residual's
+derivative: at `x` it is the derivative of the original residual at `t + x`. -/
+theorem deriv_residual_shift_canonical {n m : ℕ}
+    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (t x : ℝ) :
+    deriv (Planar.residual c (fun i ↦ canonicalPlanarAngle (theta i - t))
+      s (fun k ↦ canonicalPlanarAngle (beta k - t))) x =
+      deriv (Planar.residual c theta s beta) (t + x) := by
+  have hshift : Planar.residual c (fun i ↦ canonicalPlanarAngle (theta i - t))
+      s (fun k ↦ canonicalPlanarAngle (beta k - t)) =
+      Planar.residual c theta s beta ∘ HAdd.hAdd t := by
+    funext y
+    exact (residual_canonical_angles c (fun i ↦ theta i - t) s (fun k ↦ beta k - t) y).trans
+      (residual_common_angle_translation c theta s beta t y)
+  rw [hshift]
+  have h := (Planar.hasDerivAt_residual c theta s beta (t + x)).comp x
+    ((hasDerivAt_id x).const_add t)
+  rw [h.deriv, (Planar.hasDerivAt_residual c theta s beta (t + x)).deriv, mul_one]
+
+/-- The derivative of the residual is `π`-periodic, as the residual is. -/
+theorem deriv_residual_add_pi {n m : ℕ}
+    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (x : ℝ) :
+    deriv (Planar.residual c theta s beta) (x + π) =
+      deriv (Planar.residual c theta s beta) x := by
+  have hfun : Planar.residual c theta s beta =
+      Planar.residual c theta s beta ∘ (fun y ↦ id y + π) := by
+    funext y
+    exact (Planar.residual_periodic c theta s beta y).symm
+  have h := (Planar.hasDerivAt_residual c theta s beta (x + π)).comp x
+    ((hasDerivAt_id x).add_const π)
+  conv_rhs => rw [hfun]
+  rw [h.deriv, (Planar.hasDerivAt_residual c theta s beta (x + π)).deriv, mul_one]
+
+/-- Propagation of a zero arc around the circle by the gap Green function
+(`lem:gap-sign`). All lines lie in `[ε, xstar)`, so the cut `0` sits inside the
+zero arc. If a positive net line existed, the gap of the last positive line
+would contain the zero arc and, by the double-zero gap occupancy behind
+`lem:line-count`, a negative line as well; the gap lemma then makes the residual
+negative on that gap, a contradiction. Without positive lines the residual is a
+nonpositive combination of positive kernels, so it vanishes on the arc only if
+no negative line exists either. The nonnegative-teacher condition is used only
+to identify a positive student on every positive net line. -/
+theorem canonical_zero_arc_residual_zero {n m : ℕ}
+    (c theta : Fin n → ℝ) (s beta : Fin m → ℝ) (hs : ∀ k, 0 ≤ s k)
+    {ε xstar : ℝ} (hε : 0 < ε) (hxπ : xstar < π)
+    (htheta : ∀ i, ε ≤ theta i ∧ theta i < xstar)
+    (hbeta : ∀ k, ε ≤ beta k ∧ beta k < xstar)
+    (hstart : ∀ x, 0 < x → x < ε → Planar.residual c theta s beta x = 0)
+    (hcrit : fderiv ℝ (Planar.variableLoss s beta) (c, theta) = 0) :
+    ∀ x, Planar.residual c theta s beta x = 0 := by
+  classical
+  have hθ : ∀ i, 0 ≤ theta i ∧ theta i < π :=
+    fun i ↦ ⟨hε.le.trans (htheta i).1, (htheta i).2.trans hxπ⟩
+  have hβ : ∀ k, 0 ≤ beta k ∧ beta k < π :=
+    fun k ↦ ⟨hε.le.trans (hbeta k).1, (hbeta k).2.trans hxπ⟩
+  have hlines : ∀ x ∈ Finset.univ.image theta ∪ Finset.univ.image beta,
+      ε ≤ x ∧ x < xstar := by
+    intro x hx
+    rcases Finset.mem_union.mp hx with h | h
+    · obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp h
+      exact htheta i
+    · obtain ⟨k, _, rfl⟩ := Finset.mem_image.mp h
+      exact hbeta k
+  have hzeros : ∀ x ∈ Planar.positiveLines c theta s beta,
+      Planar.residual c theta s beta x = 0 ∧
+        deriv (Planar.residual c theta s beta) x = 0 := by
+    intro x hx
+    have hpos : 0 < Planar.netWeight c theta s beta x := (Finset.mem_filter.mp hx).2
+    obtain ⟨i, hi, hci⟩ :=
+      positive_net_weight_has_positive_student c theta s beta hs x hpos
+    have h := Planar.critical_point_double_zero hcrit i (ne_of_gt hci)
+    rwa [hi] at h
+  have hhalf : Planar.residual c theta s beta (ε / 2) = 0 :=
+    hstart (ε / 2) (half_pos hε) (half_lt_self hε)
+  have hkernel : ∀ x, 0 < Planar.kernel x := Planar.Gaps.centered_kernel_pos
+  -- Step 1: there is no positive net line.
+  have hP : Planar.positiveLines c theta s beta = ∅ := by
+    by_contra hne
+    have hnonempty : (Planar.positiveLines c theta s beta).Nonempty :=
+      Finset.nonempty_iff_ne_empty.mpr hne
+    obtain ⟨r, hcard⟩ : ∃ r, (Planar.positiveLines c theta s beta).card = r + 1 :=
+      ⟨_, (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr hnonempty)).symm⟩
+    have hd := Planar.signed_sorted_positive_data c theta s beta hcard hzeros
+    have hrange := Planar.signed_sorted_ranges c theta s beta hcard hθ hβ
+    have heq := Planar.residual_eq_signed_sorted c theta s beta hcard
+    dsimp only at hd hrange
+    set a := (Planar.positiveLines c theta s beta).orderEmbOfFin hcard
+    set b := (Planar.negativeLines c theta s beta).orderEmbOfFin rfl
+    set u : Fin (r + 1) → ℝ := fun i ↦ Planar.netWeight c theta s beta (a i)
+    set v := fun k ↦ -Planar.netWeight c theta s beta (b k)
+    obtain ⟨gap, hgap, hsurj, -⟩ := Planar.ordered_count_of_double_zeros u a v b
+      a.strictMono hrange.1 hrange.2 hd.1 hd.2.1 hd.2.2.1 hd.2.2.2.1 hd.2.2.2.2
+    obtain ⟨k, hk⟩ := hsurj (Fin.last r)
+    have hkgap := (hgap k (Fin.last r)).mp hk
+    have hright : Planar.Gaps.rightEndpoint a (Fin.last r) = a 0 + π := by
+      simp [Planar.Gaps.rightEndpoint]
+    rw [hright] at hkgap
+    set t := a (Fin.last r)
+    have hamem : ∀ i, a i ∈ Finset.univ.image theta ∪ Finset.univ.image beta :=
+      fun i ↦ (Finset.mem_filter.mp (Finset.orderEmbOfFin_mem _ hcard i)).1
+    have ha0 : ε ≤ a 0 := (hlines _ (hamem 0)).1
+    have htπ : t < π := (hlines _ (hamem (Fin.last r))).2.trans hxπ
+    have ht0 : 0 ≤ t := (hrange.1 (Fin.last r)).1
+    have ha0t : a 0 ≤ t := a.strictMono.monotone (Fin.zero_le _)
+    have hl0 : 0 < a 0 + π - t := by linarith
+    have hlπ : a 0 + π - t ≤ π := by linarith
+    have hcanon : ∀ x, 0 ≤ x → x < π →
+        canonicalPlanarAngle (x - t) = Planar.Gaps.relativeAngle t x := by
+      intro x hx0 hxπ'
+      unfold canonicalPlanarAngle Planar.Gaps.relativeAngle
+      rw [toIcoMod_eq_iff]
+      split_ifs
+      · refine ⟨⟨by linarith, by linarith⟩, -1, ?_⟩
+        simp only [zsmul_eq_mul, Int.cast_neg, Int.cast_one]
+        ring
+      · refine ⟨⟨by linarith, by linarith⟩, 0, ?_⟩
+        simp
+    set a' := fun i ↦ canonicalPlanarAngle (a i - t)
+    set b' := fun k ↦ canonicalPlanarAngle (b k - t)
+    have hshift : ∀ x, Planar.residual u a' v b' x = Planar.residual u a v b (t + x) :=
+      fun x ↦ (residual_canonical_angles u (fun i ↦ a i - t) v (fun k ↦ b k - t) x).trans
+        (residual_common_angle_translation u a v b t x)
+    have hshiftD : ∀ x, deriv (Planar.residual u a' v b') x =
+        deriv (Planar.residual u a v b) (t + x) :=
+      fun x ↦ deriv_residual_shift_canonical u a v b t x
+    have htorque : ∀ x, BeamGapKernel.residualTorque u a' v b' x =
+        deriv (Planar.residual u a' v b') x :=
+      fun x ↦ ((Planar.hasDerivAt_residual u a' v b' x).deriv).symm
+    have hderivA : ∀ i, deriv (Planar.residual u a v b) (a i) = 0 :=
+      fun i ↦ (Planar.hasDerivAt_residual u a v b (a i)).deriv.trans (hd.2.2.2.2 i)
+    have hz0 : Planar.residual u a' v b' 0 = 0 := by
+      rw [hshift, add_zero]
+      exact hd.2.2.2.1 (Fin.last r)
+    have ht0' : BeamGapKernel.residualTorque u a' v b' 0 = 0 := by
+      rw [htorque, hshiftD, add_zero]
+      exact hderivA (Fin.last r)
+    have hzl : Planar.residual u a' v b' (a 0 + π - t) = 0 := by
+      rw [hshift, show t + (a 0 + π - t) = a 0 + π by ring, Planar.residual_periodic]
+      exact hd.2.2.2.1 0
+    have htl : BeamGapKernel.residualTorque u a' v b' (a 0 + π - t) = 0 := by
+      rw [htorque, hshiftD, show t + (a 0 + π - t) = a 0 + π by ring,
+        deriv_residual_add_pi]
+      exact hderivA 0
+    have ha'range : ∀ i, 0 ≤ a' i ∧ a' i ≤ π :=
+      fun i ↦ ⟨(canonical_planar_angle_range _).1, (canonical_planar_angle_range _).2.le⟩
+    have hb'range : ∀ k, 0 ≤ b' k ∧ b' k ≤ π :=
+      fun k ↦ ⟨(canonical_planar_angle_range _).1, (canonical_planar_angle_range _).2.le⟩
+    have ha'gap : ∀ i, a' i = 0 ∨ a 0 + π - t ≤ a' i := by
+      intro i
+      show canonicalPlanarAngle (a i - t) = 0 ∨ a 0 + π - t ≤ canonicalPlanarAngle (a i - t)
+      rw [hcanon (a i) (hrange.1 i).1 (hrange.1 i).2]
+      unfold Planar.Gaps.relativeAngle
+      by_cases hi : i = Fin.last r
+      · left
+        have hit : a i = t := by rw [hi]
+        rw [hit, if_neg (lt_irrefl _), sub_self]
+      · right
+        have hlt : a i < t := a.strictMono (lt_of_le_of_ne (Fin.le_last i) hi)
+        rw [if_pos hlt]
+        linarith [a.strictMono.monotone (Fin.zero_le i)]
+    have hgapsign := Planar.gap_sign_of_clean_config u a' v b' hl0 hlπ ha'range ha'gap
+      hb'range hd.2.1 hz0 ht0' hzl htl
+    dsimp only at hgapsign
+    have hT : (Finset.univ.filter (fun k ↦ 0 < b' k ∧ b' k < a 0 + π - t)).Nonempty := by
+      refine ⟨k, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+      show 0 < canonicalPlanarAngle (b k - t) ∧ canonicalPlanarAngle (b k - t) < a 0 + π - t
+      rw [hcanon (b k) (hrange.2 k).1 (hrange.2 k).2]
+      exact hkgap
+    have hneg := (hgapsign.2 hT).1 (π - t + ε / 2) (by linarith) (by linarith)
+    have hzero' : Planar.residual u a' v b' (π - t + ε / 2) = 0 := by
+      rw [hshift, show t + (π - t + ε / 2) = ε / 2 + π by ring, Planar.residual_periodic,
+        ← heq]
+      exact hhalf
+    linarith
+  -- Step 2: without positive lines, the zero arc excludes negative lines too.
+  have hnonpos : ∀ x ∈ Finset.univ.image theta ∪ Finset.univ.image beta,
+      Planar.netWeight c theta s beta x ≤ 0 := by
+    intro x hx
+    by_contra hlt
+    push_neg at hlt
+    have hmem : x ∈ Planar.positiveLines c theta s beta := Finset.mem_filter.mpr ⟨hx, hlt⟩
+    rw [hP] at hmem
+    exact Finset.not_mem_empty x hmem
+  have hN : Planar.negativeLines c theta s beta = ∅ := by
+    by_contra hne
+    obtain ⟨y, hy⟩ := Finset.nonempty_iff_ne_empty.mpr hne
+    have hy' := Finset.mem_filter.mp hy
+    have hlt : Planar.residual c theta s beta (ε / 2) < 0 := by
+      rw [Planar.residual_eq_sum_netWeight, ← Finset.add_sum_erase _ _ hy'.1]
+      apply add_neg_of_neg_of_nonpos
+      · exact mul_neg_of_neg_of_pos hy'.2 (hkernel _)
+      · apply Finset.sum_nonpos
+        intro z hz
+        exact mul_nonpos_iff.mpr
+          (Or.inr ⟨hnonpos z (Finset.mem_of_mem_erase hz), (hkernel _).le⟩)
+    linarith
+  intro x
+  rw [Planar.residual_eq_sum_netWeight]
+  apply Finset.sum_eq_zero
+  intro y hy
+  rcases (hnonpos y hy).lt_or_eq with hlt | h0
+  · exfalso
+    have hmem : y ∈ Planar.negativeLines c theta s beta := Finset.mem_filter.mpr ⟨hy, hlt⟩
+    rw [hN] at hmem
+    exact Finset.not_mem_empty y hmem
+  · rw [h0, zero_mul]
+
+
 /-- A finite family strictly inside `(0,π)` has a common positive margin
 from both ends; the extra positive number can prescribe an arbitrary cap. -/
 theorem finite_angles_have_margin {N : ℕ}
@@ -3625,22 +3262,11 @@ theorem planar_residual_zero_of_open_zero_arc {n m : ℕ}
     apply hnear
     rw [abs_of_pos hx]
     linarith only [hxe, hεη, hη]
-  have hend : Planar.residual c theta' s beta' =ᶠ[𝓝 (π-ε)] (fun _ ↦ (0 : ℝ)) := by
-    have hband : |(π-ε)-π| < η/2 := by
-      rw [show (π-ε)-π = -ε by ring, abs_neg, abs_of_pos hε]
-      linarith only [hεη, hη]
-    have hcont : Continuous (fun x : ℝ ↦ |x-π|) := (continuous_id.sub continuous_const).abs
-    filter_upwards [hcont.continuousAt.eventually (gt_mem_nhds hband)] with x hx
-    have hz := hnear (x-π) hx
-    have hp := Planar.residual_periodic c theta' s beta' (x-π)
-    rw [sub_add_cancel] at hp
-    exact hp.trans hz
   have hmin' : IsLocalMin (Planar.variableLoss s beta') (c, theta') :=
     local_min_canonical_angles c (fun i ↦ theta i-t) s (fun k ↦ beta k-t)
       (local_min_common_angle_translation c theta s beta t hmin)
-  have hall := ZeroArcCausal.canonical_zero_arc_residual_zero_of_local_min
-    c theta' s beta' hs hε (show π-ε < π by linarith only [hε])
-    htheta' hbeta' hstart hend hmin'
+  have hall := canonical_zero_arc_residual_zero c theta' s beta' hs hε
+    (show π-ε < π by linarith only [hε]) htheta' hbeta' hstart hmin'.fderiv_eq_zero
   intro x
   have h := (htransport (x-t)).symm.trans (hall (x-t))
   simpa only [show t+(x-t)=x by ring] using h
