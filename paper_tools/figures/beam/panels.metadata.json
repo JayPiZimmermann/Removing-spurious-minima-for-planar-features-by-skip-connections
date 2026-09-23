@@ -1,0 +1,96 @@
+{
+  "consumer": "paper/main.tex#fig:residual-green",
+  "teacher_angles": [
+    0.0,
+    0.5,
+    1.6,
+    2.1
+  ],
+  "teacher_masses": [
+    1.0,
+    0.6,
+    0.8,
+    1.2
+  ],
+  "checks": {
+    "student_angles": [
+      0.3049717215875471,
+      1.827344005454459,
+      2.6584651573769076
+    ],
+    "student_masses": [
+      1.2848985999087499,
+      1.6751148699402552,
+      0.6328550958775787
+    ],
+    "gap_length": 1.5223722838669118,
+    "sources": [
+      0.1950282784124529,
+      1.295028278412453
+    ],
+    "source_masses": [
+      0.6,
+      0.8
+    ],
+    "teachers_per_student_gap": [
+      2,
+      1,
+      1
+    ],
+    "student_gap_lengths": [
+      1.5223722838669118,
+      0.8311211519224486,
+      0.7880992178004327
+    ],
+    "stationarity_error": 8.271161533457416e-15,
+    "green_endpoint_curvatures": [
+      [
+        0.15344932988525115,
+        0.02365239122900815
+      ],
+      [
+        0.0314252393559212,
+        0.17111378843280678
+      ]
+    ],
+    "green_formula_max_error": 3.1181654480683108e-16,
+    "superposition_max_error": 1.1074040989766942e-15,
+    "actual_residual_superposition_max_error": 6.497927196313924e-14
+  },
+  "primary_line_width_pt": 0.75,
+  "exported_panel_inches": [
+    [
+      2.5071957599962076,
+      1.4353668759310247
+    ],
+    [
+      1.4449903760893936,
+      1.4353668759310247
+    ],
+    [
+      1.6192873938172394,
+      1.4353668759310247
+    ]
+  ],
+  "tex_width_fractions": [
+    0.4455058054344791,
+    0.2567616025905173,
+    0.28773259197500356
+  ],
+  "evidence": "Uncertified three-student, four-teacher Newton critical configuration. Three cyclic student gaps contain 2, 1, 1 teachers. The wider first gap has teacher masses 0.6 and 0.8; the two narrower gaps have masses 1.2 and 1. Middle: one unscaled Green function on the two-teacher gap. Right: angular kernels.",
+  "normalization": "Left black dotted curves -4*t_k*G(z;zeta_k) sum to the actual F_C(a+z) inside the selected gap. Legend G(dot,beta_k) identifies each source profile; caption supplies the weights and local-angle shift. Middle shows unscaled G(z;zeta) as unit-teacher-mass reference: mass one contributes -4G, distinct from G's unit operator source. Right: Phi_R(tau)=Phi_C(tau)+(pi/2)*cos(tau).",
+  "validation": "Single-source jet matching and unit jumps; explicit formula versus 8x8 solve; sum versus independent three-interval 12x12 solve AND actual global kernel residual; sampled signs.",
+  "formula_sources": {
+    "residual": "paper_lean_formalization/Preliminaries.lean:969 eq_residual_potential_paper",
+    "green": "paper_lean_formalization/Planar.lean:1415 eq_green_function",
+    "green_definitions": "paper_lean_formalization/Planar.lean:984-995",
+    "scope": "Existing Lean identities were inspected for formula/normalization agreement; floating-point rendering and Newton output are not formally certified."
+  },
+  "invocation": "python3 paper_tools/figures/beam/generate_panels.py",
+  "sha256": {
+    "generate_panels.py": "0123c909e59941e8fe62e8ed9a7b3e745059341c4a9d5bad51b6fa37294b0cfe",
+    "planar_residual.pdf": "fe301832cef7ec789e883eaa740ed059252197d21eb4040a6023c518e0cf8f20",
+    "clamped_green.pdf": "de247c2007c1dc2943ed214d2c61a8d4cf9a8933940193ea5e6351b8be301114",
+    "angular_profiles.pdf": "4e03b0bb096a8b243332b62475e2e51cf369b81ac629b3032cce8df054f7f325"
+  }
+}

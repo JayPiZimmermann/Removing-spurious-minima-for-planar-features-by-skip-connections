@@ -20,6 +20,27 @@ All local minima allow signed mass perturbations.
 Nonnegativity is an assumption at the candidate, not a constraint on its
 neighborhood. `IsLocalMinOn L S p` means that `L p ≤ L q` for all `q` in some
 neighborhood of `p` within `S`; `IsMinOn L S p` requires this for every `q ∈ S`.
+
+## Two conventions a reader should check
+
+* The losses of `Overview_definitions.lean` are literal Bochner integrals, and
+  Mathlib's integral of a non-integrable function is `0`.  They are not trivially
+  zero: the loss–kernel identity behind `Theorems.lem_pair_moments` and
+  `Theorems.prop_loss_in_residual` is proved from
+  `Preliminaries.gaussian_loss_eq_kernel_energy_of_pair_moment`, which assumes
+  integrability of every feature pair and is discharged by
+  `Preliminaries.centered_feature_pair_integrable` and
+  `Preliminaries.gaussian_plain_pair_integrable`; the squared centered residual
+  and its product with the linear skip are integrable by
+  `Skip.centered_residual_square_integrable` and
+  `Skip.linear_centered_residual_integrable`; and `PlainTrap` below proves a
+  strict inequality `0 < PlainLoss …`.
+* Criticality in `EffectiveWidth` is written with `fderiv`, which is `0` at a
+  point of non-differentiability.  The hypothesis is not vacuous: in mass–angle
+  coordinates the plain loss is an affine rescaling of the finite kernel loss
+  (`Plain.plain_loss_eq_excess_div`), which is globally `C²`
+  (`Plain.ParameterCalculus.loss_contDiff_two`), so `fderiv ℝ … = 0` states that
+  the genuine Fréchet derivative vanishes, equivalently `HasFDerivAt … 0 (s, θ)`.
 -/
 
 noncomputable section
@@ -102,7 +123,10 @@ theorem Confinement {d n m : ℕ} (hd : 2 ≤ d) (q : Model)
 In dimension two, every positive-mass plain-ReLU critical point has at most
 `2m` distinct oriented student directions. The second clause supplies
 attainment: for every odd teacher width at least three there is a critical
-point with exactly `2m` directions. Opposite directions count separately. -/
+point with exactly `2m` directions. Opposite directions count separately.
+The `fderiv` hypothesis is a genuine derivative condition: see the conventions
+in the module docstring (`Plain.plain_loss_eq_excess_div`,
+`Plain.ParameterCalculus.loss_contDiff_two`). -/
 theorem EffectiveWidth :
     (∀ {n m : ℕ} {s θ : Fin n → ℝ} {t β : Fin m → ℝ}
         (_ : ∀ i, 0 < s i)

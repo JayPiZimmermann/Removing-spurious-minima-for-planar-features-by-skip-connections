@@ -1,0 +1,2568 @@
+{
+  "equations_and_steps": [
+    {
+      "kind": "Equation",
+      "label": "eq:models-raw",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_models_raw"
+      },
+      "scope": "Exact: The complete raw finite-sum network formula for both features, with arbitrary real output weights and unrestricted first-layer vectors."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:models",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_models"
+      },
+      "scope": "Generalized: The complete finite-sum network formula for both features and arbitrary real masses; direction vectors may have arbitrary norms."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:parameter-classes",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_parameter_classes"
+      },
+      "scope": "Exact: All three set equalities: nonnegative masses, positive masses, and signed masses with unit directions spanning a space of dimension at most two."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:losses",
+      "source": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "eq_losses"
+      },
+      "scope": "Exact: The linear skip network Gaussian loss equals the density integral of the squared student-teacher residual, with coefficient one half."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:q-losses",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_q_losses"
+      },
+      "scope": "Exact: For both features, Gaussian loss equals the density integral of the squared student-teacher residual, with coefficient one half."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:parameter-spaces",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_parameter_spaces"
+      },
+      "scope": "Exact: Both signed parameter cylinders are products of unrestricted real masses and unit spheres, with the additional unrestricted vector factor for linear skip parameters."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:raw-chain-rule",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_raw_chain_rule"
+      },
+      "scope": "Generalized: Both radial and tangential derivatives of a differentiable objective under one-row normalization at a nonzero row; the literal Gaussian-loss instance is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:skip-centered-split",
+      "source": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "eq_skip_centered_split"
+      },
+      "scope": "Generalized: The complete pointwise split into the centered network and the linear skip mismatch, with arbitrary rows and the matching half first moment explicit."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:skip-connection",
+      "source": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "eq_skip_connection"
+      },
+      "scope": "Generalized: In dimension at least two, linear skip loss equals centered loss plus one half the squared linear skip mismatch norm, for arbitrary row vectors."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:loss-connection",
+      "source": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "eq_loss_connection"
+      },
+      "scope": "Generalized: In dimension at least two, plain loss equals centered loss plus one eighth the squared first-moment mismatch norm, for arbitrary row vectors."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:kernels",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_kernels"
+      },
+      "scope": "Exact: All three clauses: the Gaussian pair moment, the centered kernel formula, and the plain kernel's linear correction, including endpoint correlations."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:ambient-residual-main",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_ambient_residual_main"
+      },
+      "scope": "Generalized: The complete signed student-minus-teacher residual sum for both kernels, evaluated at an arbitrary ambient probe without a unit-norm restriction."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:residual-loss",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_residual_loss"
+      },
+      "scope": "Exact: For unit student and teacher directions in dimension at least two, loss equals the difference of their residual pairings, scaled by 1/(4 pi)."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:residual-mass-gradient",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_residual_mass_gradient"
+      },
+      "scope": "Exact: For unit directions in dimension at least two, the derivative of loss in one mass coordinate equals its residual value divided by 2 pi."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:pair-second-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "eq_pair_second_derivative"
+      },
+      "scope": "Exact: The complete second-derivative product and chain rule for a pair term, under actual first and second derivative hypotheses and interior correlation."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:pair-closed-form",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "eq_pair_closed_form"
+      },
+      "scope": "Generalized: The complete pair-curvature formula for unit vectors with interior correlation and arbitrary displacements in any real inner-product space."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:term-trace",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
+        "decl": "eq_term_trace"
+      },
+      "scope": "Generalized: The unweighted pair's normal-shear trace for an arbitrary isometric carrier, including endpoint correlations; multiplication by a scalar weight gives each weighted term."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:global-trace",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
+        "decl": "eq_global_trace"
+      },
+      "scope": "Normalized reformulation: The normal-shear trace identity for finite signed sums of pair terms with actual path derivatives; the Gaussian loss normalization cancels."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:loss-first-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.FirstDerivativeExpectation",
+        "decl": "eq_loss_first_derivative"
+      },
+      "scope": "Specialized: The Gaussian loss derivative at zero in dimension at least two, for signed weights and arbitrary displacements, with every row nonzero or stationary."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:student-first-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.FirstDerivativeExpectation",
+        "decl": "eq_student_first_derivative"
+      },
+      "scope": "Corrected: The weighted network's pointwise derivative when each row has nonzero activation inner product or zero displacement inner product; moving activation kinks are excluded."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:mixed-second-moment",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
+        "decl": "eq_mixed_second_moment"
+      },
+      "scope": "Generalized: For differentiable scalar functions S and T with S'/2 - T' = 0 at zero, the amplitude mixed derivative equals S'/2; this is a scalar identity."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:mixed-second-moment",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.FirstDerivativeExpectation",
+        "decl": "actual_mixed_eq_gaussian_expectation"
+      },
+      "scope": "Normalized reformulation: In dimension at least two, at a local minimum with unit directions and teachers in the carrier, the normalized amplitude-normal mixed derivative equals 2 pi times the student-variation Gaussian expectation."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:mixed-second-moment",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.FirstDerivativeExpectation",
+        "decl": "first_expectation_eq_pair_derivative"
+      },
+      "scope": "Normalized reformulation: For unit student directions in dimension at least two and a common linear displacement, the student-variation Gaussian expectation equals the self-pair energy derivative divided by 4 pi."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:second-moment-pair",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.SecondMomentPair",
+        "decl": "eq_second_moment_pair"
+      },
+      "scope": "Generalized: The Gaussian second moment equals the normalized finite pair sum in dimension at least two, including signed weights and zero rows through the norm prefactors."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:norm-inner-path",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "eq_norm_inner_path"
+      },
+      "scope": "Generalized: Both norm-square and inner-product path polynomials for arbitrary displacements and real masses; normal orthogonality gives the displayed specialization."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:norm-correlation-rates",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "eq_norm_correlation_rates"
+      },
+      "scope": "Generalized: Actual derivatives of the norm product and normalized correlation along unit affine paths; the individual norm clause is supplied by the companion."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:norm-correlation-rates",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "norm_path_jet"
+      },
+      "scope": "Generalized: Actual first and second derivatives of the individual norm for arbitrary displacement. The manuscript normal-shear and mass-scaled clauses follow by the stated specialization."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:pair-term-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
+        "decl": "pair_path_jet"
+      },
+      "scope": "Generalized: Actual first and second path derivatives for the common linear displacement used by normal shear, including diagonal and antipodal endpoint correlations. This is not the entire intermediate printed algebraic chain."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:pair-term-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "eq_pair_term_derivative"
+      },
+      "scope": "Partial display: Final unweighted pair derivative formula for interior correlations and arbitrary displacement. Intermediate algebraic equalities are not conjoined; the companion covers endpoint correlations."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:second-moment-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
+        "decl": "eq_second_moment_derivative"
+      },
+      "scope": "Normalized reformulation: The normalized student self-pair energy derivative equals twice the mixed energy, including collisions; self-pair energy is 2 pi times the Gaussian second moment."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:mixed-term-formula",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
+        "decl": "eq_mixed_term_formula"
+      },
+      "scope": "Normalized reformulation: At a local minimum with unit directions and teachers in the carrier, the amplitude-normal mixed derivative equals mixed energy, using loss normalization by 2 pi and a teacher-only constant."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:revival-signed",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "eq_revival_signed"
+      },
+      "scope": "Specialized: Both signed revival quadratics at a dead unit row in dimension at least two, with centered coefficient 1/8 and plain coefficient 1/4; dimension one is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:kernel-branches",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_kernel_branches"
+      },
+      "scope": "Exact: The complete principal kernel branch identity on the interval from minus pi to pi, excluding its endpoints and including zero, with the indicator and factor two."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-split",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_split"
+      },
+      "scope": "Generalized: Both the causal residual split and the explicit homogeneous part for arbitrary finite signed support strictly between zero and pi."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-residual",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_residual"
+      },
+      "scope": "Generalized: For finite signed support between zero and pi, a zero initial arc forces the homogeneous part to vanish and gives the causal formula on [0, pi)."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-end",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_end"
+      },
+      "scope": "Generalized: Both terminal causal moment sums vanish at a single double zero below pi and beyond all atoms, assuming a zero initial arc."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-positive",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_positive"
+      },
+      "scope": "Generalized: Both causal moment sums over strictly earlier sources vanish at a support double zero, assuming a zero initial arc; source-weight positivity is unnecessary."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-split-y",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_split_y"
+      },
+      "scope": "Generalized: A vanishing causal value sum splits into the first source at y and sources strictly between y and z, for arbitrary weights and y < z."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-split-y-derivative",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_split_y_derivative"
+      },
+      "scope": "Generalized: A vanishing causal derivative sum splits into the first source at y and sources strictly between y and z, using the derivative of the causal kernel."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:causal-elimination",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ZeroArcCausal",
+        "decl": "eq_causal_elimination"
+      },
+      "scope": "Generalized: Both the vanishing cross-product sum and its quotient factorization, for arbitrary weights and sources strictly between y and z with 0 < z-y < pi."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:zero-mass-pairing",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "eq_zero_mass_pairing"
+      },
+      "scope": "Specialized: For both models with unit directions in dimension at least two, a residual vanishing on the unit sphere gives zero Gaussian loss; the intermediate pairing is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:zero-mass-pairing",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_residual_loss"
+      },
+      "scope": "Exact: The actual loss equals the student residual pairing minus the teacher residual pairing, scaled by 1/(4 pi), before the zero-residual substitution. Repeated statement of eq:residual-loss: The zero-mass display repeats the identical pairing before substituting zero residual; the actual proof consumes this existing identity, so no duplicate Lean alias is introduced."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:one-student-quadratic",
+      "source": null,
+      "scope": "Excluded from fresh proof development; no proof claim."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:one-student-arc",
+      "source": null,
+      "scope": "Excluded from fresh proof development; no proof claim."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:teacher-potential-expansion",
+      "source": null,
+      "scope": "Excluded from fresh proof development; no proof claim."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:net-weight-main",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_net_weight_main"
+      },
+      "scope": "Specialized: The net-weight and signed-support definitions for signed masses, with projective lines represented by their canonical angles in [0, pi)."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:residual-potential-paper",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_residual_potential_paper"
+      },
+      "scope": "Exact: The complete finite-sum angular residual on real representatives of quotient angles, using the periodic lift obtained by composing the kernel with cosine."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:definition_beam_operator",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.GreenWronskian",
+        "decl": "SmoothJet.operator"
+      },
+      "scope": "Exact: The operator (D\\textasciicircum{}2 + 1)\\textasciicircum{}2 acts as the fourth derivative plus twice the second derivative plus the function, with actual successive derivative witnesses."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:definition_V",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.BeamKernel",
+        "decl": "mode"
+      },
+      "scope": "Generalized: The explicit four-coefficient family (A + Cx) cos x + (B + Dx) sin x parametrizes the stated span; a span-set equality is not asserted."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:gap-green-representation",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.NetSurface",
+        "decl": "eq_gap_green_representation"
+      },
+      "scope": "Generalized: The signed net Green representation on a translated canonical closed gap of length at most pi, with double-zero endpoints and no positive interior lines."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:LFC",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_LFC"
+      },
+      "scope": "Generalized: The residual and atomic sources satisfy the weak operator identity against periodic four-times continuously differentiable tests, allowing collisions; the statement is a test-function identity. Accepted alternative formulation; distinct from the literal statement. A piecewise C4 adjoint identity with matching derivatives through order two and explicit third-derivative jump terms allows the Green test to have an interior singularity."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:kernel-jet",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_kernel_jet"
+      },
+      "scope": "Specialized: The principal branch's endpoint values and successive derivatives at zero and pi; these specify analytic branch traces without asserting one-sided derivative limits."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:LFC-jump",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_LFC_jump"
+      },
+      "scope": "Specialized: In canonical angle coordinates, the right-minus-left analytic third-derivative branch trace equals four times the net weight, including coincident signed atoms; one-sided derivative limits are separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-linear-system",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_linear_system"
+      },
+      "scope": "Generalized: The complete scalar system for the explicit Green coefficients at arbitrary source and length with nonzero determinant; uniqueness is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-determinant",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_determinant"
+      },
+      "scope": "Exact: The clamped Green coefficient matrix determinant equals minus Lambda for every real interval length; this identity alone asserts no positivity."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-M0",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_M0"
+      },
+      "scope": "Exact: The complete explicit formula for the Green curvature numerator, with complementary distance equal to length minus source position, for all real arguments."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-A",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_A"
+      },
+      "scope": "Exact: The complete explicit formula for the Green jerk numerator, with complementary distance length minus source position and the causal-kernel second derivative expanded."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-function",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_function"
+      },
+      "scope": "Generalized: The complete explicit Green profile for arbitrary source and evaluation points with nonzero determinant, including equality at the source; uniqueness and positivity are separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:wronski_beauty",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.GreenWronskian",
+        "decl": "eq_wronski_beauty"
+      },
+      "scope": "Generalized: The derivative identity for the bilinear concomitant, assuming four successive derivatives at the evaluation point; global fourth-order smoothness is unnecessary."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-pairing",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_pairing"
+      },
+      "scope": "Partial display: The terminal clamped finite-source response equals minus four times its Green superposition, with nonzero determinant; the preceding boundary, integral, and distributional chain is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:gap-second-derivative-green",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_gap_second_derivative_green"
+      },
+      "scope": "Specialized: Both endpoint residual second derivatives equal their Green sums on a translated canonical gap with double-zero endpoints, no interior students, and signed teacher sources."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:gap-derivative",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_gap_derivative"
+      },
+      "scope": "Specialized: Both empty and nonempty source alternatives for endpoint curvature in a translated clean gap with positive interior teacher loads; sources are indexed by teachers."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:opposed-rotation-curvature",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_opposed_rotation_curvature"
+      },
+      "scope": "Specialized: The normalized finite-loss curvature under opposed rotation of distinct rows with equal angle representatives; no criticality or mass-sign assumptions are required."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:diagonal-angle-hessian",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_diagonal_angle_hessian"
+      },
+      "scope": "Partial display: The final diagonal angle second-derivative identity with factor 2 pi and the self-interaction correction; the intermediate excluded-self-sum differentiation chain is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:opposed-rotation-computation",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_opposed_rotation_computation"
+      },
+      "scope": "Partial display: For distinct rows with equal angles, the final curvature cancellation gives the mass-product times mass-sum times residual curvature; the intermediate two-by-two Hessian block is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-descent-direction",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "eq_beam_descent_direction"
+      },
+      "scope": "Generalized: The actual Gaussian loss curve has negative second derivative; the public descent proposition supplies these clean double-zero hypotheses."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-feature-variation",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_feature_variation"
+      },
+      "scope": "Generalized: The finite feature formula for arbitrary mass variations and independent angular momenta, using a sign representative; pointwise differentiability at activation kinks is not asserted. Accepted alternative formulation; distinct from the literal statement. The explicit finite absolute-sine/sign sum defining the feature variation for mass velocities and angular momenta."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:definition_E",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_definition_E"
+      },
+      "scope": "Exact: The complete feature-energy integral identity and its nonnegativity, for arbitrary finite mass variations, angular momenta, and angle representatives."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-second-variation-raw",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_second_variation_raw"
+      },
+      "scope": "Normalized reformulation: The actual normalized finite-kernel loss second variation and residual derivatives under explicit second-order regularity, parity, and Gram identities; Gaussian loss identification is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-gram",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_gram"
+      },
+      "scope": "Exact: Both Gram integral identities for feature and sign-derivative representatives, with the positive first-kernel-derivative and negative second-kernel-derivative signs retained."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:E_first_sum",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_E_first_sum"
+      },
+      "scope": "Exact: The complete finite double-sum expression equals the feature-energy integral, retaining every coefficient and the mixed first-derivative and angular second-derivative signs."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-hessian-offdiagonal",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_hessian_offdiagonal"
+      },
+      "scope": "Normalized reformulation: All three off-diagonal mixed partials of normalized finite-kernel loss under second-order kernel regularity and parity, for distinct indices without angle-separation or mass-sign restrictions."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-hessian-diagonal",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_hessian_diagonal"
+      },
+      "scope": "Normalized reformulation: All three diagonal partials of normalized finite-kernel loss under kernel regularity and parity, including the self-curvature correction and cancellation of the kernel derivative at zero."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-second-variation",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_second_variation"
+      },
+      "scope": "Normalized reformulation: The normalized signed-energy second-variation identity under residual slope stationarity, with angular momentum equal to mass times velocity; totalized division includes zero masses, and positivity is not asserted."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-gap-sinusoid",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_gap_sinusoid"
+      },
+      "scope": "Specialized: The feature equals its signed sinusoid in global coordinates on an open gap, for arbitrary mass variations and momenta satisfying the explicit branch-sign hypothesis."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-energy-gapwise",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_energy_gapwise"
+      },
+      "scope": "Generalized: The energy equals one quarter of the cyclic gap-integral sum for sorted one-period angles and arbitrary variations, including one full-period gap; no criticality is required."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-feature-jumps",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_feature_jumps"
+      },
+      "scope": "Exact: Both feature-value and actual branch-derivative jumps across ordinary cuts; the cyclic wrap cut is supplied by the companion identity."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-feature-jumps",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_feature_jumps_wrap"
+      },
+      "scope": "Exact: Both feature-value and actual branch-derivative jumps across the cyclic wrap cut, completing the ordinary-cut identities for a full period."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-constants",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_constants"
+      },
+      "scope": "Generalized: Literal gap coefficient formulas and positivity; actual residual curvatures are identified in the ordered endpoint through eq\\_beam\\_curvature\\_ratio."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-direction-angle",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "angleMomentum"
+      },
+      "scope": "Exact: The displayed x\\_i neighbor formula is the genuinely used direct momentum definition."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-direction-angle",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_direction_angle"
+      },
+      "scope": "Generalized: The velocity times mass equals angleMomentum and is positive; the companion momentum definition and mode witness expose the displayed neighbor formula and velocity quotient."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-direction",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_direction"
+      },
+      "scope": "Generalized: Actual cyclic mass-velocity formula with both adjacent gaps."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-energy",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_energy"
+      },
+      "scope": "Generalized: Actual feature energy, not a formal arbitrary energy variable."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-branch",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_branch"
+      },
+      "scope": "Generalized: Expanded d/e coefficient formula for the constructed local branch."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-branch-start",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_branch_start"
+      },
+      "scope": "Generalized: Initial value and actual derivative are linked by HasDerivAt, not only a named slope expression."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-branch-end",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_branch_end"
+      },
+      "scope": "Generalized: Terminal value and actual derivative, including the endpoint coefficient identities."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-branch-jumps",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_branch_jumps"
+      },
+      "scope": "Generalized: Ordinary cuts; a separate companion states the cyclic wrap cut, both consumed by actual gluing."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-branch-jumps",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_branch_jumps_wrap"
+      },
+      "scope": "Generalized: The cyclic wrap companion completes the modulo-n value and actual derivative jump display."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-glued-profile",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_glued_profile"
+      },
+      "scope": "Generalized: Literal half-open right-trace profile using toIcoMod and its periodic extension."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-glued-feature",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_glued_feature"
+      },
+      "scope": "Generalized: A substantive open-gap reconstruction identity, stronger than merely defining S=2xi."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-periodic-antiperiodic",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_periodic_antiperiodic"
+      },
+      "scope": "Generalized: The corrected sketch uses one-sided sinusoidal continuations, avoiding the false pointwise sign-zero continuity assertion."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-branch-energy",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_branch_energy"
+      },
+      "scope": "Generalized: The integral and coefficient 16 are literal in the theorem."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-energy-proof",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_energy_proof"
+      },
+      "scope": "Generalized: Two distinct partitions of the actual profile integral connect the general feature gap-energy formula to the constructed branch energy."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-descent-identity",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_descent_identity"
+      },
+      "scope": "Generalized: The E and second-derivative variables are supplied by the actual energy and loss derivative at the consuming endpoint."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-target",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_target"
+      },
+      "scope": "Generalized: Literal finite target inequality, consumed by the negative second-variation argument."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-gap-data",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_beam_gap_data"
+      },
+      "scope": "Generalized: Both endpoints and both Green derivatives are present; the third derivatives are explicit one-sided analytic branches, not a total derivative at a knot."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-curvature-ratio",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_curvature_ratio"
+      },
+      "scope": "Generalized: All three scalar readings, specialized to actual residual derivatives by the ordered local-jet consumer."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-split",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_split"
+      },
+      "scope": "Generalized: Both displayed equalities, with positive physical denominators supplied by the gap data."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-gap-sum",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_gap_sum"
+      },
+      "scope": "Generalized: General endpoint-ratio arrays; actual analytic branch traces instantiate them in the descent proof."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-gap-inequality",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_gap_inequality"
+      },
+      "scope": "Generalized: Explicit positive teacher mass, gap length and source location, without assuming the decisive C2 sign certificate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-bracket-factorization",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "C2_eq_negative_brackets"
+      },
+      "scope": "Generalized: The corrected sketch displays the already-used exact reflected bracket factorization; no positivity shortcut is assumed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-ratio-derivative",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "ratio_derivative"
+      },
+      "scope": "Generalized: The actual derivative of R=psi prime/Lambda prime on (0,pi), with the displayed factored numerator and squared denominator. Its negativity yields strict decrease of psi/Lambda through the mean-value argument."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:trap-taylor",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.LocalSeed",
+        "decl": "eq_trap_taylor"
+      },
+      "scope": "Generalized: The Taylor lower bound for a general normed-space objective with actual directional derivative witnesses and a segment curvature floor. The box certificate supplies the displayed Hessian-floor specialization."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:merge-cross-term",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "unnormalized_jensen"
+      },
+      "scope": "Generalized: For any finite nonnegative weights of positive total mass and their weighted mean, convexity gives the displayed nonnegative cross term. The merging proof supplies the actual residual and common interval."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:trap-student-masses",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.SeedCertificate",
+        "decl": "eq_trap_student_masses"
+      },
+      "scope": "Exact: All displayed seed masses as exact rational numbers equal to the stated decimal constants, including the rational value 695398940163/500000000000."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:trap-student-angles",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.SeedCertificate",
+        "decl": "eq_trap_student_angles"
+      },
+      "scope": "Exact: All displayed seed angles as exact rational multiples of pi, equivalently specifying the displayed angle-to-pi ratios without numerical approximation."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:trap-positive-loss",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.SeedCertificate",
+        "decl": "seed_ball_positive_gaussian_loss"
+      },
+      "scope": "Generalized: The actual Gaussian loss is strictly positive throughout radius 1/1000, which includes the printed radius 1/50000 box. The proof uses an unmatched teacher kink, not a numerical Fourier lower bound."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:sine-load-identity",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "eq_sine_load_identity"
+      },
+      "scope": "Exact: The residual's second derivative equals twice the signed finite absolute-sine load minus the residual itself, with arbitrary student and teacher angle representatives."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:trap-seed-curvature",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "certified_seed"
+      },
+      "scope": "Exact: The final conjunct of the existential certified-seed theorem gives actual residual curvature above 1/8 at that same critical strict minimum. It is not a universal noncritical box curvature claim."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:ceiling-count",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PlainCharges",
+        "decl": "eq_ceiling_count"
+      },
+      "scope": "Proof improvement: The terminal width bound n <= 2m follows from an injection into teacher indices paired with two charges; the displayed partition-cardinality chain is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:corner-free-boundary",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "FreshBoundary",
+        "decl": "eq_corner_free_boundary"
+      },
+      "scope": "Partial display: The final endpoint conservation identity for an explicit harmonic function A cos x + B sin x and its derivative; intermediate integration-by-parts equalities are separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:jump-summation",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "FreshJumpSummation",
+        "decl": "eq_jump_summation"
+      },
+      "scope": "Generalized: The complete algebraic jump-summation identity for abstract one-sided value and derivative traces satisfying piecewise conservation, with the displayed endpoint terms and signs."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:duhamel-sum",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "FreshDuhamel",
+        "decl": "eq_duhamel_sum"
+      },
+      "scope": "Specialized: The finite-atom Duhamel identity for 0 < y-a < pi, using the actual initial right derivative and coefficient two; first crossed pi-lifts retain coincident atoms."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:gap-orthogonality",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "eq_gap_orthogonality"
+      },
+      "scope": "Partial display: The final zero sine-moment identity between consecutive tour endpoints at a critical configuration with positive student masses; no angle ordering is required, and the intermediate derivative-integral chain is separate."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:empirical-loss",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_empirical_loss"
+      },
+      "scope": "Generalized: The centered residual plus mismatch linear skip loss is the ordinary unweighted half-square sample average; the companion supplies the observed-label raw DataLoss equality."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:empirical-loss-mismatch",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "raw_empirical_loss_eq_sheared"
+      },
+      "scope": "Exact: teacher-generated observed labels give the literal raw DataLoss equality in mismatch coordinates; together with the half-square companion this covers both displayed equalities."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:modulus",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_modulus"
+      },
+      "scope": "Generalized: The input-only DataAccuracy hypothesis gives the displayed Gaussian comparison for every continuous degree-two homogeneous test and closed-unit-ball Lipschitz bound."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:max-product-distance",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_max_product_distance"
+      },
+      "scope": "Generalized: The maximum metric in mass, direction and mismatch linear skip coordinates; raw parameter balls are transported using the matching linear skip mismatch."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:data-scaling",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_scaling"
+      },
+      "scope": "Generalized: The finite scaling curve yields average A squared equals average A times T at a fixed-radius minimum."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:data-scaling-loss",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_scaling_loss"
+      },
+      "scope": "Generalized: Actual half-square loss at scaling stationarity equals half the difference of the two sample second moments; nonnegative loss gives the student moment bound directly."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:data-coercivity",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_coercivity"
+      },
+      "scope": "Generalized: For d>=2, positive width, nonnegative student masses and unit directions, the actual Gaussian moment bounds squared total student mass/(4n) plus squared mismatch linear skip norm."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:data-parameter-bounds",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_parameter_bounds"
+      },
+      "scope": "Generalized: For positive observed second moment and sufficiently small DataAccuracy, both displayed bounds and the compact box membership hold; the final bridge handles zero inputs and empty teachers separately."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:uniform-comparison",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_uniform_comparison"
+      },
+      "scope": "Generalized: The actual raw sample objective is rescaled by d/R2 and compared with population loss; positive R2 is local to this bound, not an extra premise of the final theorem."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:zm-revival",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "stp_zm_revival"
+      },
+      "scope": "Specialized: For either model in dimension at least two, a dead unit at a sphere-relative local minimum yields a nonempty relatively open residual-zero patch."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:zm-propagation",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "stp_zm_propagation"
+      },
+      "scope": "Proof improvement: For centered loss, an open residual-zero patch propagates over the unit sphere. Dimension one is included; in dimension two the teacher masses are nonnegative."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:zm-pairing",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "stp_zm_pairing"
+      },
+      "scope": "Specialized: A sphere-wide zero residual gives zero Gaussian loss for either model in dimension at least two; the dimension-one case is separate."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:green-beam-equation",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.GreenWronskian",
+        "decl": "eq_LFC_piecewise_test"
+      },
+      "scope": "Step component: A piecewise fourth-order adjoint identity with two knots, second-order matching, prescribed jumps and boundary terms; this is the singular-test mechanism, not the entire residual regularity step."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:green-function",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_function"
+      },
+      "scope": "Step component: The explicit Green-profile formula with nonzero determinant. This is the formula component; clamping, regularity, uniqueness and sign properties are separate."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:green-representation",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "stp_green_representation"
+      },
+      "scope": "Step component: Finite-source Green representation for a response satisfying both right-end clamping conditions and nonzero determinant; the preceding adjoint and boundary calculations are not conjoined."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:green-signs",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "gap_sign_of_clean_config"
+      },
+      "scope": "Specialized: For a clean canonical gap with positive teacher loads and four endpoint clamps, empty sources mean zero residual; otherwise the interior residual and both endpoint curvatures are strictly negative."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:beam-second-variation",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "stp_beam_second_variation"
+      },
+      "scope": "Step component: The signed-energy second-variation identity under explicit kernel calculus, residual-slope stationarity and momentum relations; gap profiles and jumps are stated separately."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:beam-mode",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "stp_beam_mode"
+      },
+      "scope": "Generalized: Constructs the actual mass and angle velocities and proves their energy identity."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:beam-gap-inequality",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "stp_beam_gap_inequality"
+      },
+      "scope": "Generalized: The concrete scalar inequality, cyclic target and actual energy/derivative readings yield the negative second variation."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:plain-box",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "certified_seed"
+      },
+      "scope": "Step component: The certified seed lies inside the numerical box and is a strict positive-loss minimum with positive masses. Its proof uses the generic box certificate and the rational Hessian and gradient bounds."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:plain-curvature",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "certified_seed"
+      },
+      "scope": "Step component: At the same certified critical seed, the residual curvature at the selected third unit exceeds 1/8; this is not a bound throughout the noncritical box."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:plain-splitting",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "certified_seed_at_every_width"
+      },
+      "scope": "Step component: A positive-mass local minimum with the seed loss is constructed at every width at least three. The generic finite-splitting lemma handles the wider cases and supplies their coincident children."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:finite-data-compactness",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_parameter_bounds"
+      },
+      "scope": "Generalized: Both parameter bounds and compact membership, with the actual scaling and coercivity dependencies."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:finite-data-uniform",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "thickened_box_uniform_comparison"
+      },
+      "scope": "Generalized: Uniform objective comparison on the enlarged compact box, allowing signed competitor masses."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:finite-data-stability",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "common_zero_cluster_contradiction"
+      },
+      "scope": "Generalized: A limiting population minimum is a common pointwise zero of the sample objectives; stability then contradicts positive empirical loss."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:green-positivity",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "green_positive"
+      },
+      "scope": "Strict interior positivity of the clamped Green function for every gap length up to a full period; the endpoint curvatures are eq_green_endpoint_curvatures in the same namespace."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:relu-pair-angular",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_relu_pair_angular"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:loss-quadratic",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_loss_quadratic"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:arcsin-vector-gram",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.GaussianSignGram",
+        "decl": "eq_arcsin_vector_gram"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:plain-correction-trace",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PlainConfinementVariation",
+        "decl": "eq_plain_correction_trace"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:proportional-pair-quadratic",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PairKernelJet",
+        "decl": "eq_proportional_pair_quadratic"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:collinear-arcsin-sum",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.MixedEnergyPositive",
+        "decl": "eq_collinear_arcsin_sum"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-ansatz",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_ansatz"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-ratio-derivative",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_ratio_derivative"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-numerator-ratio",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_numerator_ratio"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:width-one-centered-loss",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "eq_width_one_centered_loss"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-hessian-offdiagonal-masses",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_hessian_offdiagonal"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-hessian-offdiagonal-mass-angle",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_hessian_offdiagonal"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-hessian-diagonal-mass",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_hessian_diagonal"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-hessian-diagonal-mass-angle",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "eq_beam_hessian_diagonal"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-gap-scalar",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "C2"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-M",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "M"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:beam-Theta",
+      "source": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.Beam",
+        "decl": "theta"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:one-student-quadratic",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.ZeroMassExample",
+        "decl": "eq_one_student_quadratic"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:one-student-arc",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.ZeroMassExample",
+        "decl": "eq_one_student_arc"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:teacher-potential-expansion",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.ZeroMassExample",
+        "decl": "eq_teacher_potential_expansion"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:box-hypotheses",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "box_strict_minimum"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:box-boundary-gap",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.LocalSeed",
+        "decl": "eq_box_boundary_margin"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:positive-partition",
+      "source": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_positive_curvature_splitting"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:plain-loss-normalization",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "eq_plain_kernel_normalization"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:child-barycenter",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "eq_split_barycenter"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:split-local-comparison",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "eq_split_local_comparison"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:seed-gram-matrix",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.SeedNumerics",
+        "decl": "seedGramWitness"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:seed-hessian-enclosure",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "eq_seed_hessian_enclosure"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:seed-hessian-sos",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.SeedNumerics",
+        "decl": "eq_seed_hessian_sos"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:seed-curvature-margin",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.SeedCertificate",
+        "decl": "eq_trap_curvature_rational_margin"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:data-moment-absorption",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_moment_absorption"
+      },
+      "scope": "Imported from the structure.tex equation declarations (2026-09-21); scope not separately reviewed."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:residual-angle-derivative",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_residual_loss_pairing_main"
+      },
+      "scope": "The tangential derivative of the loss in one direction equals the mass times the great-circle derivative of the probe of the residual; the same declaration as eq:residual-loss-pairing-main."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:directional-hessian-notation",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
+        "decl": "polarPath"
+      },
+      "scope": "Notation: directional derivatives of the loss along the displacement paths; the Lean proof differentiates the loss along polarPath, the mass--direction path of a common linear displacement of all generators."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:gaussian-sign-arcsin",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.GaussianSignGram",
+        "decl": "gaussian_sign_pair"
+      },
+      "scope": "Exact: the Gaussian covariance of the two half-space signs is (2/pi) arcsin of the inner product, including the collinear endpoints."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:jumper_function",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "psi"
+      },
+      "scope": "Definition of the jumper function psi(t) = sin t - t cos t."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:jumper_derivative",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "psi_derivative"
+      },
+      "scope": "Exact: psi has derivative chi(t) = t sin t."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:reciprocity_green",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "green_branch_reciprocity"
+      },
+      "scope": "Green reciprocity of the two clamped branches, proved through conservation of the adjoint boundary form."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-sign-claims",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar",
+        "decl": "eq_green_sign_claims"
+      },
+      "scope": "Exact: interior positivity of the clamped Green function and both strict endpoint curvatures, for every gap length up to a full period."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:Mzero_positive",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "moment_positive"
+      },
+      "scope": "Exact: the source-to-left-end curvature numerator M_0 is strictly positive."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:data-teacher-bound",
+      "source": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "eq_data_teacher_bound"
+      },
+      "scope": "Exact: at a scaling-stationary point the sample student moment is at most the teacher moment, which is at most R_2 S^2/4."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:reductions",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
+        "decl": "local_minimum_polar_path"
+      },
+      "scope": "Reduction: a local minimum on the unit-direction parameter space is a local minimum along every polar displacement path, which is how the Lean proof uses the generator coordinates; merging and freezing are handled inside the confinement assembly."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:zn_hessian_kernel",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.ConfinementTraceAssembly",
+        "decl": "centered_normal_curvature_zero"
+      },
+      "scope": "The normal second derivative of the centered loss vanishes at a local minimum whose teacher lies in the range of the isometry J (the teacher span); this is the conclusion of the trace identity eq:global-trace."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:conclusion",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
+        "decl": "centered_mixed_energy_zero"
+      },
+      "scope": "The finite mixed energy of eq:mixed-term-formula vanishes at the centered local minimum; its positivity when some normal component is nonzero gives the confinement."
+    },
+    {
+      "kind": "Step",
+      "label": "stp:comments_plain_relu",
+      "source": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.PlainConfinementVariation",
+        "decl": "plain_normal_curvature_zero"
+      },
+      "scope": "The plain-ReLU analogue of the null normal curvature, with the first-moment correction of eq:plain-correction-trace."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:loss-quadratic-regrouped",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "eq_residual_loss"
+      },
+      "scope": "The regrouping of eq:loss-quadratic by the residual; the same declaration as eq:residual-loss."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:ring-operator",
+      "source": {
+        "file": "BentRing.lean",
+        "namespace": "PaperLeanFormalization.BentRing",
+        "decl": "eq_ring_operator"
+      },
+      "scope": "Exact: for a six times continuously differentiable tangential displacement, the derivative of the beam operator applied to its derivative is Love's sixth-order operator; Love's equation (12) itself is a cited physical model."
+    }
+  ],
+  "statements": [
+    {
+      "kind": "Definition",
+      "labels": [
+        "def:networks"
+      ],
+      "clause": "",
+      "entry": null,
+      "local": null,
+      "scope": "Definition components and parameter conventions; no separate theorem binding. See \\eqref{eq:models-raw}."
+    },
+    {
+      "kind": "Definition",
+      "labels": [
+        "def:losses"
+      ],
+      "clause": "",
+      "entry": null,
+      "local": null,
+      "scope": "Definition components and parameter conventions; no separate theorem binding. See \\eqref{eq:losses}, \\eqref{eq:q-losses}."
+    },
+    {
+      "kind": "Definition",
+      "labels": [
+        "def:minima"
+      ],
+      "clause": "",
+      "entry": null,
+      "local": null,
+      "scope": "Definition components and parameter conventions; no separate theorem binding. See \\eqref{eq:parameter-classes}."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:raw-transfer"
+      ],
+      "clause": "q",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_raw_transfer"
+      },
+      "local": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "lem_raw_transfer"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:raw-transfer"
+      ],
+      "clause": "linear skip",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_raw_transfer_skip"
+      },
+      "local": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "lem_raw_transfer_skip"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:equivalence_loss_skip_centered"
+      ],
+      "clause": "critical",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_skip_critical_iff"
+      },
+      "local": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "skip_critical_point_iff"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:equivalence_loss_skip_centered"
+      ],
+      "clause": "identities",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_equivalence_loss_skip_centered"
+      },
+      "local": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "lem_equivalence_loss_skip_centered"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:equivalence_loss_skip_centered"
+      ],
+      "clause": "local minimum",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_skip_local_minimum_iff"
+      },
+      "local": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "skip_local_minimum_iff"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:equivalence_loss_skip_centered"
+      ],
+      "clause": "strict local minimum",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_skip_strict_local_minimum_iff"
+      },
+      "local": {
+        "file": "Skip.lean",
+        "namespace": "PaperLeanFormalization.Skip",
+        "decl": "skip_strict_local_minimum_iff"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:pair-moments"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_pair_moments"
+      },
+      "local": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "lem_pair_moments"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:loss_in_residual"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_loss_in_residual"
+      },
+      "local": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.Preliminaries",
+        "decl": "prop_loss_in_residual"
+      },
+      "scope": "Energy pairing, actual mass derivative, and the actual spherical directional derivative along a great circle; no replacement by an arbitrary named gradient expression."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:teacher-span-confinement"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_teacher_span_confinement"
+      },
+      "local": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "prop_teacher_span_confinement"
+      },
+      "scope": "Input dimension at least two; both activation models; nonnegative student masses, arbitrary signed teacher masses, unit directions and local minimality. Active student directions lie in the teacher span."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:zero_mass_exact_fit"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_zero_mass_exact_fit"
+      },
+      "local": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "prop_zero_mass_exact_fit"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:nc-dead-student"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_nc_dead_student"
+      },
+      "local": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "prop_nc_dead_student"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:nc-dead-counterexamples"
+      ],
+      "clause": "line, (a)",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_nc_dead_counterexamples"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.LineExample",
+        "decl": "opposed_local_minimum"
+      },
+      "scope": "The opposed zero-mass student on the line is a local minimum on the unit-direction parameter space, with the explicit loss $(s^2+1)/4$ of the opposed student and loss $0$ for the teacher copy."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:nc-dead-counterexamples"
+      ],
+      "clause": "plane, (b)",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_nc_dead_counterexamples"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain.ZeroMassExample",
+        "decl": "zero_mass_spurious_minimum"
+      },
+      "scope": "For the fixed five-unit signed teacher and either activation, every zero-mass one-student parameter with angle in $(-\\pi/6,\\pi/6)$ is a local minimum on the unit-direction space with positive loss and a lower-loss one-student competitor."
+    },
+    {
+      "kind": "Remark",
+      "labels": [
+        "rem:planar_residual_equivalence"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "rem_planar_residual_equivalence"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "rem_planar_residual_equivalence"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:critical-points-are-double-zeros"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_critical_points_are_double_zeros"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "lem_critical_points_are_double_zeros"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:beam-kernel"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_beam_kernel"
+      },
+      "local": {
+        "file": "Beam.lean",
+        "namespace": "PaperLeanFormalization.BeamKernel",
+        "decl": "lem_beam_kernel"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:gap-sign"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_gap_sign"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.NetSurface",
+        "decl": "lem_gap_sign"
+      },
+      "scope": "Canonical representatives in [0,pi), translated left cut at zero. The Green representation, empty-gap equivalence, sign and both endpoint curvatures are all included."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:line-count"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_line_count"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.LineSurface",
+        "decl": "lem_line_count"
+      },
+      "scope": "Canonical real line representatives, positive/negative net supports, double zeros and cyclic weak interlacing; the support cardinality consequence is included."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:opposed-rotation"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_opposed_rotation"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "lem_opposed_rotation"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:S-is-small"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_S_is_small"
+      },
+      "local": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "lem_S_is_small"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:S-plus-eq-student-lines"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_S_plus_eq_student_lines"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "prop_S_plus_eq_student_lines"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:no-collisions"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_no_collisions"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "lem_no_collisions"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:locamin_are_line_separated"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_locamin_are_line_separated"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "prop_locamin_are_line_separated"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:beam-descent"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_beam_descent"
+      },
+      "local": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.GaussianSurface",
+        "decl": "prop_beam_descent"
+      },
+      "scope": "Actual Gaussian affine second derivative is strictly negative. The fresh proof derives interlacing and constructs its direction from the stated positive equal-width separated critical configuration."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:centered"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_centered"
+      },
+      "local": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "centered_benign_pos_dimension"
+      },
+      "scope": "All $d\\ge1$; the scalar total-mass proof handles $d=1$, and the planar reduction handles $d\\ge2$. Empty widths are included."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:headline"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_headline"
+      },
+      "local": {
+        "file": "Geometry.lean",
+        "namespace": "PaperLeanFormalization.Geometry",
+        "decl": "skip_benign_pos_dimension"
+      },
+      "scope": "All $d\\ge1$; a fixed-direction residual-scaling path handles $d=1$, with the original loss decomposition for $d\\ge2$."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:plain-trap"
+      ],
+      "clause": "every width",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_plain_trap"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "thm_plain_trap"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:plain-trap"
+      ],
+      "clause": "flat above three",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_plain_trap_flat"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "thm_plain_trap_flat"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:plain-trap"
+      ],
+      "clause": "nonglobal",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_plain_trap_spurious"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "thm_plain_trap_spurious"
+      },
+      "scope": "Explicit feasible same-width competitor with strictly smaller loss, establishing genuine nonglobal spuriousness."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:plain-trap"
+      ],
+      "clause": "strict three",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_plain_trap_strict"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "thm_plain_trap_strict"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:box-certificate"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_box_certificate"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "box_strict_minimum"
+      },
+      "scope": "A C2 objective on arbitrary finite coordinate blocks, with a Euclidean Hessian floor and dual Euclidean center-gradient bound, has a unique strict minimum in the interior of the max-norm box."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:box-certificate"
+      ],
+      "clause": "spurious",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_box_certificate_spurious"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "box_minimum_affine_spurious"
+      },
+      "scope": "Positive affine normalization, positive actual loss on the box and an exact-fit competitor imply strict spuriousness. Positive mass coordinates are an optional separate consequence, not a premise for spuriousness."
+    },
+    {
+      "kind": "Lemma",
+      "labels": [
+        "lem:positive-curvature-splitting"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "lem_positive_curvature_splitting"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "positive_curvature_finite_splitting"
+      },
+      "scope": "Any positive finite partition of the chosen positive mass preserves the represented network, actual loss and local minimality when its residual curvature is positive. Two or more children give an injective constant-loss curve and non-strictness. The local provider indexes k+1 children; the central entry point explicitly adapts to every k>=1."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:plain-collision-ceiling"
+      ],
+      "clause": "bound",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_plain_collision_ceiling"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "prop_plain_collision_ceiling"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Proposition",
+      "labels": [
+        "prop:plain-collision-ceiling"
+      ],
+      "clause": "sharp",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "prop_plain_collision_ceiling_sharp"
+      },
+      "local": {
+        "file": "Plain.lean",
+        "namespace": "PaperLeanFormalization.Plain",
+        "decl": "prop_plain_collision_ceiling_sharp"
+      },
+      "scope": "Sharpness is witnessed for odd teacher widths m>=3, as in the printed explicit family; not a claim of attainment for every m."
+    },
+    {
+      "kind": "Remark",
+      "labels": [
+        "rem:finite-data-accuracy"
+      ],
+      "clause": "accuracy",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "rem_finite_data_accuracy"
+      },
+      "local": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "rem_finite_data_accuracy"
+      },
+      "scope": "Model-independent DataAccuracy for identically distributed inputs with an orthogonally invariant common law and finite positive second moment; one measurable high-probability event works for every sufficiently large sample size and every test."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:minimizer-stability"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_minimizer_stability"
+      },
+      "local": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "thm_minimizer_stability"
+      },
+      "scope": "Explicit canonical contract and its local proof; see the equation table for any chart, normalization or proof-variant qualifications."
+    },
+    {
+      "kind": "Theorem",
+      "labels": [
+        "thm:fixed-radius-bridge"
+      ],
+      "clause": "",
+      "entry": {
+        "file": "Theorems.lean",
+        "namespace": "PaperLeanFormalization.Theorems",
+        "decl": "thm_fixed_radius_bridge"
+      },
+      "local": {
+        "file": "Empirical.lean",
+        "namespace": "PaperLeanFormalization.Empirical",
+        "decl": "thm_fixed_radius_bridge"
+      },
+      "scope": "All $d\\ge1$; dimension one needs no accuracy hypothesis. Ordinary finite DataLoss with teacher-generated labels. The accuracy threshold is uniform over nonempty datasets, teacher linear skips and nonnegative fixed-radius minima. Zero-input datasets are included; signed competitors remain in the ball."
+    }
+  ]
+}

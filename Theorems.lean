@@ -126,7 +126,10 @@ theorem lem_skip_critical_iff :
 
 /-! ## Pair moments and the residual -/
 
-/-- `lem:pair-moments`, including the literal Gaussian normalization. -/
+/-- `lem:pair-moments`, including the literal Gaussian normalization. The integrand
+is integrable (`Preliminaries.centered_feature_pair_integrable`,
+`Preliminaries.gaussian_plain_pair_integrable`), so the Bochner integral is the
+genuine expectation. -/
 theorem lem_pair_moments :
     ∀ {d : ℕ} (_ : 2 ≤ d) (q : Model) (ξ ζ : Vec d)
       (_ : ‖ξ‖ = 1) (_ : ‖ζ‖ = 1),
@@ -135,7 +138,11 @@ theorem lem_pair_moments :
       Kernel q ⟪ξ, ζ⟫_ℝ :=
   @Preliminaries.lem_pair_moments
 
-/-- `prop:loss_in_residual`: loss, mass derivative, and spherical derivative. -/
+/-- `prop:loss_in_residual`: loss, mass derivative, and spherical derivative. The loss
+is a Bochner integral of an integrable function: the identity rests on
+`Preliminaries.gaussian_loss_eq_kernel_energy_of_pair_moment`, whose integrability
+hypothesis is discharged by the two pair-integrability lemmas named at
+`lem_pair_moments`. -/
 theorem prop_loss_in_residual :
     ∀ {d n m : ℕ} (hd : 2 ≤ d) (q : Model) (s : Fin n → ℝ) (w : Fin n → Vec d)
       (t : Fin m → ℝ) (v : Fin m → Vec d)
@@ -543,7 +550,10 @@ theorem thm_plain_trap_flat :
         {p | ∀ i, ‖p.2 i‖ = 1} (s, w) :=
   @Plain.thm_plain_trap_flat
 
-/-- The bound in `prop:plain-collision-ceiling`, counting oriented directions. -/
+/-- The bound in `prop:plain-collision-ceiling`, counting oriented directions. The
+`fderiv` hypothesis is not vacuous: the plain loss in mass–angle coordinates is an
+affine rescaling (`Plain.plain_loss_eq_excess_div`) of a globally `C²` function
+(`Plain.ParameterCalculus.loss_contDiff_two`). -/
 theorem prop_plain_collision_ceiling :
     ∀ {n m : ℕ} {s θ : Fin n → ℝ} {t β : Fin m → ℝ}
       (_ : ∀ i, 0 < s i)

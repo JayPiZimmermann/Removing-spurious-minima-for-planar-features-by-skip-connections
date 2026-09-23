@@ -1,0 +1,53 @@
+{
+  "consumer": "paper/main.tex#fig:zonotope-first-harmonic",
+  "masses": [
+    1.0,
+    0.85,
+    0.55
+  ],
+  "direction_degrees": [
+    8.0,
+    100.0,
+    240.0
+  ],
+  "notation": "P_c=P-tau; f_K is the support function of K",
+  "colors": {
+    "raw": "#D55E00",
+    "centered": "#AA4499",
+    "translation": "#000000"
+  },
+  "arrow": "From the center of P_c at zero to the center of P at tau; label +tau.",
+  "checks": "Independent polygon construction, support-function translation, pi periodicity, and discrete Fourier identities in the reused mathematical provider.",
+  "scope": "Floating-point illustration of exact identities, not a new formal certificate. Geometry uses equal axis scales; spectra are amplitudes of cosine/sine coefficient pairs for modes 1 through 8.",
+  "panel_inches": [
+    2.05,
+    1.25
+  ],
+  "primary_line_width_pt": 0.75,
+  "exported_panel_inches": [
+    [
+      1.4319403967165232,
+      1.0878020823874448
+    ],
+    [
+      1.798003336419633,
+      1.0878020823874448
+    ],
+    [
+      1.7272973129464597,
+      1.0878020823874448
+    ]
+  ],
+  "tex_width_fractions": [
+    0.28596975203971803,
+    0.3590753982927808,
+    0.34495484966750123
+  ],
+  "sha256": {
+    "generate_panels.py": "854475617526e424c69d0d4b905bc1f2814a4ee694d5a414440c34c359c8316b",
+    "generate_zonotope_harmonic.py": "a171f1bf25800cafc66beb400f1ef4709bbb9345404e9f25af10e4f4be9fa4e6",
+    "polytope_translation.pdf": "90168cb0dd2b9083049fb44e7a389baad366fae1e482a616199e16ff06d4bd19",
+    "support_functions.pdf": "fc091ac9d589fb446411553e2c6a1eaf3f9590b93ffb7c1708218ab3bc0b1ee7",
+    "fourier_spectrum.pdf": "c0650b94c3284ff04a02e9febba86664fab1e525eba71a3e3829580b307a17e4"
+  }
+}

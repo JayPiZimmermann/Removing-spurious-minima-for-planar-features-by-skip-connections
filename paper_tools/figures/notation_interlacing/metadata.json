@@ -1,0 +1,45 @@
+{
+  "status": "included",
+  "consumers": [
+    "paper/main.tex#fig:interlacing"
+  ],
+  "invocation": "python3 paper_tools/figures/notation_interlacing/generate.py",
+  "teacher_angles_over_pi": [
+    "1/12",
+    "5/12",
+    "3/4"
+  ],
+  "student_angles_over_pi": [
+    "1/4",
+    "7/12",
+    "11/12"
+  ],
+  "student_masses": [
+    "3/2",
+    "4/5",
+    "7/5"
+  ],
+  "teacher_masses": [
+    1,
+    1,
+    1
+  ],
+  "interlacing_student_directions_over_pi": [
+    "1/4",
+    "7/12",
+    "23/12"
+  ],
+  "interlacing_teacher_directions_over_pi": [
+    "1/12",
+    "17/12",
+    "3/4"
+  ],
+  "radial_cutoff": 1.55,
+  "evidence_boundary": "Illustrative positive, line-separated configuration; no stationarity claim.",
+  "rendering": "Exact rational inputs, floating-point trigonometric rendering.",
+  "sha256": {
+    "generate.py": "3c8092d3e2e19005b6bb102c65568597d949057dd649e8e48d334990612f733f",
+    "student_notation.pdf": "b1f0d18d712fdbfe4aa19bdaebfb15f8f424a62e5a50f7e91e29f4513c27f63d",
+    "strict_interlacing.pdf": "5dbab8842599e9da9c68ce1ed3f6e809b9ee96a94540d0d1f1265da40beb5a9c"
+  }
+}

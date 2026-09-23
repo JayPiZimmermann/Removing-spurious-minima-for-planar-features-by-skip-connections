@@ -1,0 +1,36 @@
+{
+  "consumers": [
+    "paper/main.tex#fig:pull-push-step"
+  ],
+  "teacher_angles_over_pi": [
+    0.2,
+    0.8
+  ],
+  "student_angles_over_pi": [
+    0.38,
+    1.05
+  ],
+  "masses": "All background masses and the single added probe mass equal one.",
+  "independent_probe_positions_over_pi": [
+    0.38,
+    1.05,
+    1.6
+  ],
+  "arrow_scale": 0.6,
+  "value_range": [
+    -7.5,
+    4.8
+  ],
+  "primary_line_width_pt": 0.75,
+  "legend": "Three rows outside the upper-right plot edge, with equal short solid samples and 6.8 pt labels P, (-S), (-F). Panel-specific C/R. S and F belong to the probe-adjoined configuration evaluated at the probe angle; S includes the self-term Phi(0).",
+  "arrowheads": "Filled triangular heads; apex at the exact shaft endpoint, no retraction.",
+  "arrow_coordinates": "(angle change, mass change), same factor in data coordinates; origins on y=0.",
+  "checks": "Kernel identities, residual identity, exact arrow addition, finite differences of the actual Gaussian loss including at collided probes.",
+  "evidence": "Illustrative single-probe negative gradients, not trajectories or stationary points.",
+  "invocation": "python3 paper_tools/figures/pull_push_step/generate_panels.py",
+  "sha256": {
+    "generate_panels.py": "30960fb9ef98e4b3ecbc9cbc922fdd108a1c2bf158ec3ab796cb48dc590206bf",
+    "pull_push_centered.pdf": "e474f624486aead0f1d15fa1dbef236505e79c56d48394c01d41fb906173fea3",
+    "pull_push_plain.pdf": "ebe308c598c9404a41903e50cdb084eee349b9c235965524f097d6c13c402857"
+  }
+}
