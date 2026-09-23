@@ -95,19 +95,16 @@ audit their axiom dependencies, run from the same directory:
 python3 verify.py --manifest verification.json
 ```
 
-## Agent skills and prompts
+## Agent skills
 
-The development was produced with an agentic proof search.  The instructions
-that steered it are included so that the workflow is inspectable:
-
-| Folder | Contents |
-| --- | --- |
-| [skills](skills) | The reusable agent skills: formalization architecture, build discipline, certificates, Lean and mathematical conventions, research search, and mathematical exposition. |
-| [prompts](prompts) | The task prompts used for the recurring campaigns: bridging informal proofs to Lean, simplifying natural-language proofs, correctness and cleanup sweeps of the Lean tree, the paper-facing interface, and the stopping rules for proof-search branches. |
-
-They are plain Markdown and are not needed to build or check the
-formalization.  Project-specific paths, file names, and identifying details
-have been removed; what remains is the transferable instruction content.
+The development was produced with an agentic proof search.  The reusable
+agent skills that steered it are included in [skills](skills) so that the
+workflow is inspectable: formalization architecture, build discipline,
+certificates, Lean and mathematical conventions, research search, and
+mathematical exposition.  They are plain Markdown and are not needed to build
+or check the formalization.  Project-specific paths, file names, and
+identifying details have been removed; what remains is the transferable
+instruction content.
 
 ## Build certificate
 
