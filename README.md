@@ -95,6 +95,10 @@ audit their axiom dependencies, run from the same directory:
 python3 verify.py --manifest verification.json
 ```
 
+`verify.py` and `scripts/build_certificate.sh` bind the audit to a git commit. In
+an unpacked archive without `.git`, first run
+`git init -q && git add -A && git commit -qm snapshot`.
+
 ## Agent skills
 
 The development was produced with an agentic proof search.  The reusable
@@ -116,7 +120,7 @@ transcribed, by the scripts in [paper_tools](paper_tools):
 | [paper_tools/links.json](paper_tools/links.json) | The machine-readable map from paper labels to Lean declarations: every displayed equation and named proof step, and every theorem, proposition, lemma, and remark, addressed by file, namespace, and name. |
 | [paper_tools/gen_lean_links.py](paper_tools/gen_lean_links.py) | Regenerates from that map the equation and proof-step hyperlinks of the manuscript, refreshes every in-text pointer's line number from the declaration name, and writes the "Lean Certificates" appendix (the five contributions as Lean source and the statement-to-Lean table). |
 | [paper_tools/gen_certificate_constants.py](paper_tools/gen_certificate_constants.py) | Reads the box-certificate literals of the plain-ReLU trap (center, radius, Gram witness, Hessian enclosure, curvature floor, gradient bounds) from `Plain.lean` and writes them as LaTeX macros to [paper_tools/generated/certificate_constants.tex](paper_tools/generated/certificate_constants.tex); `--check` compares them with a manuscript. |
-| [paper_tools/figures](paper_tools/figures) | The generators, provenance records, and tests of the four manuscript figures (beam panels, notation and interlacing, pull–push step, zonotope harmonic), each with its own README. |
+| [paper_tools/figures](paper_tools/figures) | The generators, provenance records, and tests of the four manuscript figures (beam panels, notation and interlacing, pull–push step, zonotope harmonic), each with its own README; they need `pip install numpy matplotlib pycairo`. |
 
 ## Build certificate
 

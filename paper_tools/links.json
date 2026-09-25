@@ -28,7 +28,7 @@
         "namespace": "PaperLeanFormalization.Preliminaries",
         "decl": "eq_parameter_classes"
       },
-      "scope": "Exact: All three set equalities: nonnegative masses, positive masses, and signed masses with unit directions spanning a space of dimension at most two."
+      "scope": "Exact: All three set equalities: non-negative masses, positive masses, and signed masses with unit directions spanning a space of dimension at most two."
     },
     {
       "kind": "Equation",
@@ -58,7 +58,7 @@
         "namespace": "PaperLeanFormalization.Preliminaries",
         "decl": "eq_raw_chain_rule"
       },
-      "scope": "Generalized: Both radial and tangential derivatives of a differentiable objective under one-row normalization at a nonzero row; the literal Gaussian-loss instance is separate."
+      "scope": "Generalized: Both radial and tangential derivatives of a differentiable objective under one-row normalization at a non-zero row; the literal Gaussian-loss instance is separate."
     },
     {
       "kind": "Equation",
@@ -178,7 +178,7 @@
         "namespace": "PaperLeanFormalization.FirstDerivativeExpectation",
         "decl": "eq_loss_first_derivative"
       },
-      "scope": "Specialized: The Gaussian loss derivative at zero in dimension at least two, for signed weights and arbitrary displacements, with every row nonzero or stationary."
+      "scope": "Specialized: The Gaussian loss derivative at zero in dimension at least two, for signed weights and arbitrary displacements, with every row non-zero or stationary."
     },
     {
       "kind": "Equation",
@@ -188,7 +188,7 @@
         "namespace": "PaperLeanFormalization.FirstDerivativeExpectation",
         "decl": "eq_student_first_derivative"
       },
-      "scope": "Corrected: The weighted network's pointwise derivative when each row has nonzero activation inner product or zero displacement inner product; moving activation kinks are excluded."
+      "scope": "Corrected: The weighted network's pointwise derivative when each row has non-zero activation inner product or zero displacement inner product; moving activation kinks are excluded."
     },
     {
       "kind": "Equation",
@@ -372,24 +372,6 @@
     },
     {
       "kind": "Equation",
-      "label": "eq:one-student-quadratic",
-      "source": null,
-      "scope": "Excluded from fresh proof development; no proof claim."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:one-student-arc",
-      "source": null,
-      "scope": "Excluded from fresh proof development; no proof claim."
-    },
-    {
-      "kind": "Equation",
-      "label": "eq:teacher-potential-expansion",
-      "source": null,
-      "scope": "Excluded from fresh proof development; no proof claim."
-    },
-    {
-      "kind": "Equation",
       "label": "eq:net-weight-main",
       "source": {
         "file": "Planar.lean",
@@ -476,7 +458,7 @@
         "namespace": "PaperLeanFormalization.Planar.Gaps",
         "decl": "eq_green_linear_system"
       },
-      "scope": "Generalized: The complete scalar system for the explicit Green coefficients at arbitrary source and length with nonzero determinant; uniqueness is separate."
+      "scope": "Generalized: The complete scalar system for the explicit Green coefficients at arbitrary source and length with non-zero determinant; uniqueness is separate."
     },
     {
       "kind": "Equation",
@@ -516,7 +498,7 @@
         "namespace": "PaperLeanFormalization.Planar.Gaps",
         "decl": "eq_green_function"
       },
-      "scope": "Generalized: The complete explicit Green profile for arbitrary source and evaluation points with nonzero determinant, including equality at the source; uniqueness and positivity are separate."
+      "scope": "Generalized: The complete explicit Green profile for arbitrary source and evaluation points with non-zero determinant, including equality at the source; uniqueness and positivity are separate."
     },
     {
       "kind": "Equation",
@@ -536,7 +518,7 @@
         "namespace": "PaperLeanFormalization.Planar.Gaps",
         "decl": "eq_green_pairing"
       },
-      "scope": "Partial display: The terminal clamped finite-source response equals minus four times its Green superposition, with nonzero determinant; the preceding boundary, integral, and distributional chain is separate."
+      "scope": "Partial display: The terminal clamped finite-source response equals minus four times its Green superposition, with non-zero determinant; the preceding boundary, integral, and distributional chain is separate."
     },
     {
       "kind": "Equation",
@@ -556,7 +538,7 @@
         "namespace": "PaperLeanFormalization.Planar",
         "decl": "eq_gap_derivative"
       },
-      "scope": "Specialized: Both empty and nonempty source alternatives for endpoint curvature in a translated clean gap with positive interior teacher loads; sources are indexed by teachers."
+      "scope": "Specialized: Both empty and non-empty source alternatives for endpoint curvature in a translated clean gap with positive interior teacher loads; sources are indexed by teachers."
     },
     {
       "kind": "Equation",
@@ -976,7 +958,7 @@
         "namespace": "PaperLeanFormalization.Plain",
         "decl": "unnormalized_jensen"
       },
-      "scope": "Generalized: For any finite nonnegative weights of positive total mass and their weighted mean, convexity gives the displayed nonnegative cross term. The merging proof supplies the actual residual and common interval."
+      "scope": "Generalized: For any finite non-negative weights of positive total mass and their weighted mean, convexity gives the displayed non-negative cross term. The merging proof supplies the actual residual and common interval."
     },
     {
       "kind": "Equation",
@@ -1136,7 +1118,7 @@
         "namespace": "PaperLeanFormalization.Empirical",
         "decl": "eq_data_scaling_loss"
       },
-      "scope": "Generalized: Actual half-square loss at scaling stationarity equals half the difference of the two sample second moments; nonnegative loss gives the student moment bound directly."
+      "scope": "Generalized: Actual half-square loss at scaling stationarity equals half the difference of the two sample second moments; non-negative loss gives the student moment bound directly."
     },
     {
       "kind": "Equation",
@@ -1146,7 +1128,7 @@
         "namespace": "PaperLeanFormalization.Empirical",
         "decl": "eq_data_coercivity"
       },
-      "scope": "Generalized: For d>=2, positive width, nonnegative student masses and unit directions, the actual Gaussian moment bounds squared total student mass/(4n) plus squared mismatch linear skip norm."
+      "scope": "Generalized: For d>=2, positive width, non-negative student masses and unit directions, the actual Gaussian moment bounds squared total student mass/(4n) plus squared mismatch linear skip norm."
     },
     {
       "kind": "Equation",
@@ -1176,7 +1158,7 @@
         "namespace": "PaperLeanFormalization.Geometry",
         "decl": "stp_zm_revival"
       },
-      "scope": "Specialized: For either model in dimension at least two, a dead unit at a sphere-relative local minimum yields a nonempty relatively open residual-zero patch."
+      "scope": "Specialized: For either model in dimension at least two, a dead unit at a sphere-relative local minimum yields a non-empty relatively open residual-zero patch."
     },
     {
       "kind": "Step",
@@ -1186,7 +1168,7 @@
         "namespace": "PaperLeanFormalization.Geometry",
         "decl": "stp_zm_propagation"
       },
-      "scope": "Proof improvement: For centered loss, an open residual-zero patch propagates over the unit sphere. Dimension one is included; in dimension two the teacher masses are nonnegative."
+      "scope": "Proof improvement: For centered loss, an open residual-zero patch propagates over the unit sphere. Dimension one is included; in dimension two the teacher masses are non-negative."
     },
     {
       "kind": "Step",
@@ -1216,7 +1198,7 @@
         "namespace": "PaperLeanFormalization.Planar.Gaps",
         "decl": "eq_green_function"
       },
-      "scope": "Step component: The explicit Green-profile formula with nonzero determinant. This is the formula component; clamping, regularity, uniqueness and sign properties are separate."
+      "scope": "Step component: The explicit Green-profile formula with non-zero determinant. This is the formula component; clamping, regularity, uniqueness and sign properties are separate."
     },
     {
       "kind": "Step",
@@ -1226,7 +1208,7 @@
         "namespace": "PaperLeanFormalization.Planar.Gaps",
         "decl": "stp_green_representation"
       },
-      "scope": "Step component: Finite-source Green representation for a response satisfying both right-end clamping conditions and nonzero determinant; the preceding adjoint and boundary calculations are not conjoined."
+      "scope": "Step component: Finite-source Green representation for a response satisfying both right-end clamping conditions and non-zero determinant; the preceding adjoint and boundary calculations are not conjoined."
     },
     {
       "kind": "Step",
@@ -1736,7 +1718,7 @@
         "namespace": "PaperLeanFormalization.AmplitudeNormalVariation",
         "decl": "centered_mixed_energy_zero"
       },
-      "scope": "The finite mixed energy of eq:mixed-term-formula vanishes at the centered local minimum; its positivity when some normal component is nonzero gives the confinement."
+      "scope": "The finite mixed energy of eq:mixed-term-formula vanishes at the centered local minimum; its positivity when some normal component is non-zero gives the confinement."
     },
     {
       "kind": "Step",
@@ -1777,6 +1759,76 @@
         "decl": "eq_ring_operator"
       },
       "scope": "Exact: for a six times continuously differentiable tangential displacement, the derivative of the beam operator applied to its derivative is Love's sixth-order operator; Love's equation (12) itself is a cited physical model."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:angular-kernel-d2+1",
+      "source": {
+        "file": "Preliminaries.lean",
+        "namespace": "PaperLeanFormalization.KernelCalculus",
+        "decl": "hasDerivAt_angularKernel_first"
+      },
+      "scope": "Specialized: the centered kernel q=C, as the derivative of Phi_C' = -sin * arcsin(cos) at every angle; the plain case is Plain.plainKernel_second_derivative."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-decomposition",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "stp_green_representation"
+      },
+      "scope": "Specialized: clamped piecewise-V responses with finitely many sources equal the Green superposition with coefficients the third-derivative jumps."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-system",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_linear_system"
+      },
+      "scope": "Specialized: the double-zero system at l for the Green coefficients, in the basis (sin x - x cos x, x sin x)."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:green-construction",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.Planar.Gaps",
+        "decl": "eq_green_ansatz"
+      },
+      "scope": "Exact up to basis: the Green function is the truncated jumper plus the element of V fixed by the linear system."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:net-weight-plain",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "FlatSineJump",
+        "decl": "abs_sine_difference_line_weight"
+      },
+      "scope": "Related: the plain net mass on a line appears as the jump weight of the sine load; S_plus/minus are not formalized separately."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:sine-load-jump",
+      "source": {
+        "file": "Plain.lean",
+        "namespace": "FreshDuhamel",
+        "decl": "abs_sine_duhamel"
+      },
+      "scope": "Related: the one-atom Duhamel formula for |sin|, whose slope term 2 sin(y - knot) carries the jump of the sine load at an atom."
+    },
+    {
+      "kind": "Equation",
+      "label": "eq:angular-kernel",
+      "source": {
+        "file": "Planar.lean",
+        "namespace": "PaperLeanFormalization.BeamGapKernel",
+        "decl": "kernel_eq_branch"
+      },
+      "scope": "Specialized: the explicit centered kernel (pi/2 - tau) cos tau + sin tau on [0, pi]; the other cases follow by evenness and periodicity."
     }
   ],
   "statements": [
@@ -1970,7 +2022,7 @@
         "namespace": "PaperLeanFormalization.Geometry",
         "decl": "prop_teacher_span_confinement"
       },
-      "scope": "Input dimension at least two; both activation models; nonnegative student masses, arbitrary signed teacher masses, unit directions and local minimality. Active student directions lie in the teacher span."
+      "scope": "Input dimension at least two; both activation models; non-negative student masses, arbitrary signed teacher masses, unit directions and local minimality. Active student directions lie in the teacher span."
     },
     {
       "kind": "Proposition",
@@ -2024,7 +2076,7 @@
         "namespace": "PaperLeanFormalization.Plain.LineExample",
         "decl": "opposed_local_minimum"
       },
-      "scope": "The opposed zero-mass student on the line is a local minimum on the unit-direction parameter space, with the explicit loss $(s^2+1)/4$ of the opposed student and loss $0$ for the teacher copy."
+      "scope": "The opposed zero-mass student unit on the line is a local minimum on the unit-direction parameter space, with the explicit loss $(s^2+1)/4$ of the opposed student unit and loss $0$ for the teacher copy."
     },
     {
       "kind": "Lemma",
@@ -2042,7 +2094,7 @@
         "namespace": "PaperLeanFormalization.Plain.ZeroMassExample",
         "decl": "zero_mass_spurious_minimum"
       },
-      "scope": "For the fixed five-unit signed teacher and either activation, every zero-mass one-student parameter with angle in $(-\\pi/6,\\pi/6)$ is a local minimum on the unit-direction space with positive loss and a lower-loss one-student competitor."
+      "scope": "For the fixed five-unit signed teacher network and either activation, every zero-mass one-student parameter with angle in $(-\\pi/6,\\pi/6)$ is a local minimum on the unit-direction space with positive loss and a lower-loss one-student competitor."
     },
     {
       "kind": "Remark",
@@ -2319,7 +2371,7 @@
       "labels": [
         "thm:plain-trap"
       ],
-      "clause": "nonglobal",
+      "clause": "non-global",
       "entry": {
         "file": "Theorems.lean",
         "namespace": "PaperLeanFormalization.Theorems",
@@ -2330,7 +2382,7 @@
         "namespace": "PaperLeanFormalization.Plain",
         "decl": "thm_plain_trap_spurious"
       },
-      "scope": "Explicit feasible same-width competitor with strictly smaller loss, establishing genuine nonglobal spuriousness."
+      "scope": "Explicit feasible same-width competitor with strictly smaller loss, establishing genuine non-global spuriousness."
     },
     {
       "kind": "Theorem",
@@ -2492,7 +2544,7 @@
         "namespace": "PaperLeanFormalization.Empirical",
         "decl": "thm_fixed_radius_bridge"
       },
-      "scope": "All $d\\ge1$; dimension one needs no accuracy hypothesis. Ordinary finite DataLoss with teacher-generated labels. The accuracy threshold is uniform over nonempty datasets, teacher linear skips and nonnegative fixed-radius minima. Zero-input datasets are included; signed competitors remain in the ball."
+      "scope": "All $d\\ge1$; dimension one needs no accuracy hypothesis. Ordinary finite DataLoss with teacher-generated labels. The accuracy threshold is uniform over non-empty datasets, teacher linear skips and non-negative fixed-radius minima. Zero-input datasets are included; signed competitors remain in the ball."
     }
   ]
 }

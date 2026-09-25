@@ -305,12 +305,12 @@ def contributions_tex(links: dict) -> str:
     bridges = {
         1: (
             "\\Cref{thm:headline} is the population statement of the paper's title: "
-            "with a learned linear skip, a nonnegative local minimum of the skip loss "
-            "against a positive coplanar teacher has zero loss whenever the student is "
-            "at least as wide. The skip loss is the only new definition."
+            "with a learned linear skip, a non-negative local minimum of the skip loss "
+            "against a positive coplanar teacher network has zero loss whenever the "
+            "student network is at least as wide. The skip loss is the only new definition."
         ),
         2: (
-            "\\Cref{thm:plain-trap} needs the fixed planar trap teacher, the planar "
+            "\\Cref{thm:plain-trap} needs the fixed planar trap teacher network, the planar "
             "direction $e(\\theta)$, and strict local minimality on the unit-direction "
             "parameter space; its three clauses are exactly the theorem's three "
             "conclusions."
@@ -343,7 +343,7 @@ def contributions_tex(links: dict) -> str:
             "matching skip, the accuracy condition against the Gaussian functional on "
             "degree-two homogeneous tests, and the fixed-radius minimization hypothesis; the "
             "theorem then produces one tolerance $\\delta$ before the dataset, the labels, "
-            "the skips, and the student are chosen."
+            "the skips, and the student network are chosen."
         ),
     }
     for name, title, label, number in CONTRIBUTIONS:
@@ -447,6 +447,10 @@ def equation_links(links: dict, tex: str) -> str:
             print(f"  no \\label or \\pfstep for {lab}; link not declared", file=sys.stderr)
             continue
         if not row["source"]:
+            continue
+        # One link per label: the first listed source is the primary one; a
+        # second \DeclareLeanEquation for the label would silently override it.
+        if any(l.startswith(f"\\DeclareLeanEquation{{{lab}}}") for l in lines):
             continue
         lines.append(
             f"\\DeclareLeanEquation{{{lab}}}{{{row['source']['file']}}}"
