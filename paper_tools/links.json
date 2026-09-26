@@ -332,16 +332,6 @@
     },
     {
       "kind": "Equation",
-      "label": "eq:zero-arc-no-positive",
-      "source": {
-        "file": "Geometry.lean",
-        "namespace": "PaperLeanFormalization.Geometry",
-        "decl": "zero_arc_no_positive_line"
-      },
-      "scope": "Exact, in the canonical cut with all lines in [ε, x*): a zero arc at the cut and criticality exclude every positive net line, by gap occupancy and lem:gap-sign on the gap of the last positive line."
-    },
-    {
-      "kind": "Equation",
       "label": "eq:zero-arc-no-negative",
       "source": {
         "file": "Geometry.lean",
