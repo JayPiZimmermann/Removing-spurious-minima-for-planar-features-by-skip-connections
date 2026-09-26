@@ -149,10 +149,6 @@ Regenerate it from the repository root with
 ./scripts/build_certificate.sh
 ```
 
-The same script runs in continuous integration on every push
-(`.github/workflows/build-certificate.yml`), which builds from a clean
-checkout and publishes the certificate as a workflow artifact.
-
 ## Read interactively
 
 Install [VS Code](https://code.visualstudio.com/docs/setup/linux), then install
