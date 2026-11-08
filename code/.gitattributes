@@ -1,0 +1,2 @@
+# Preserve CSV bytes, including line endings and optimizer message fields.
+results/*.csv -text whitespace=cr-at-eol,-blank-at-eol
