@@ -49,16 +49,20 @@ def digest(*arrays):
     return h.hexdigest()
 
 
-def inputs(m, n, d, trial):
-    V2 = unit(rng(m, trial, 1).normal(size=(m, 2)))
+def inputs(m, n, d, teacher_geometry, trial):
     s = rng(m, trial, 2).uniform(0.5, 1.5, m)
-    Q = np.eye(2) if d == 2 else np.linalg.qr(
-        rng(m, trial, 3, d).normal(size=(d, 2)), mode="reduced"
-    )[0]
-    V = unit(V2 @ Q.T)
+    if teacher_geometry == "random":
+        V = unit(rng(m, trial, 6, d).normal(size=(m, d)))
+        latent = V
+    else:
+        latent = unit(rng(m, trial, 1).normal(size=(m, 2)))
+        Q = np.eye(2) if d == 2 else np.linalg.qr(
+            rng(m, trial, 3, d).normal(size=(d, 2)), mode="reduced"
+        )[0]
+        V = unit(latent @ Q.T)
     W = unit(rng(m, trial, 4, d, n).normal(size=(n, d)))
     c = rng(m, trial, 5, d, n).uniform(0.5, 1.5, n) * np.sum(s) / n
-    return s, V, c, W, V2
+    return s, V, c, W, latent
 
 
 class Objective:
@@ -135,9 +139,9 @@ def checked_loss(c, W, s, V, b, model):
 
 
 def run_case(case):
-    m, n, d, trial = case
+    m, n, d, teacher_geometry, trial = case
     s, V, c0, W0, V2 = inputs(*case)
-    base = dict(m=m, n=n, d=d, trial=trial,
+    base = dict(m=m, n=n, d=d, teacher_geometry=teacher_geometry, trial=trial,
                 latent_teacher_hash=digest(s, V2), input_hash=digest(s, V, c0, W0))
     records = []
     for model in MODELS:
@@ -169,11 +173,17 @@ def validate():
     if (np.__version__, scipy.__version__) != ("2.4.6", "1.17.1"):
         raise RuntimeError("install the pinned requirements before running")
     for m, n in ((3, 3), (5, 10)):
-        low, high = inputs(m, n, 2, 0), inputs(m, n, 800, 0)
+        low = inputs(m, n, 2, "planar", 0)
+        high = inputs(m, n, 800, "embedded", 0)
+        random_teacher = inputs(m, n, 800, "random", 0)
+        assert np.array_equal(high[0], random_teacher[0])
+        assert np.array_equal(high[2], random_teacher[2])
+        assert np.array_equal(high[3], random_teacher[3])
+        assert np.linalg.matrix_rank(random_teacher[1]) == m
         assert digest(low[0], low[4]) == digest(high[0], high[4])
         assert np.allclose(low[1]@low[1].T, high[1]@high[1].T, atol=2e-14, rtol=0)
-        assert len({digest(*inputs(m, n, 2, t)[:2]) for t in range(TRIAL_COUNT)}) == TRIAL_COUNT
-        for s, V, c, W, _ in (low, high):
+        assert len({digest(*inputs(m, n, 2, "planar", t)[:2]) for t in range(TRIAL_COUNT)}) == TRIAL_COUNT
+        for s, V, c, W, _ in (low, high, random_teacher):
             d = V.shape[1]
             for model in MODELS:
                 objective = Objective(model, s, V, n)
@@ -209,7 +219,7 @@ def main():
         raise SystemExit("run.py takes no arguments; the experiment is fixed")
     validate()
     hashes = source_hashes()
-    cases = [(m, n, d, t) for m, n, d in SETTINGS for t in range(TRIAL_COUNT)]
+    cases = [(*setting, t) for setting in SETTINGS for t in range(TRIAL_COUNT)]
     available = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1)
     workers = min(16, available)
     RESULTS.mkdir(exist_ok=True)
@@ -236,7 +246,7 @@ def main():
         trials_csv_sha256=hashlib.sha256((RESULTS / "trials.csv").read_bytes()).hexdigest(),
     )
     (RESULTS / "manifest.json").write_text(json.dumps(manifest, indent=2)+"\n", encoding="utf-8")
-    print("Finished. Run python code/tables.py to regenerate the CSV summary and LaTeX tables.", flush=True)
+    print("Finished. Run python code/tables.py to regenerate the CSV summary and LaTeX table.", flush=True)
 
 
 if __name__ == "__main__":

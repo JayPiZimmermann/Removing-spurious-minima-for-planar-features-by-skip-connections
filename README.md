@@ -14,8 +14,9 @@ code/.venv/bin/python code/tables.py
 ```
 
 Runs all 512 paired trials per setting with a fixed seed, using up to 16 CPU
-processes. CSV results and the two generated LaTeX tables are in
-[`code/results/`](code/results/); the fixed protocol is in [`code/README.md`](code/README.md).
+processes. CSV results are in [`code/results/`](code/results/); the table is
+generated directly at `paper/source/tables/experiments.tex`.
+The fixed protocol is in [`code/README.md`](code/README.md).
 
 Start with [Overview_theorems.lean](Overview_theorems.lean): it contains the
 five theorems we declare as our main contribution, with their proofs. All

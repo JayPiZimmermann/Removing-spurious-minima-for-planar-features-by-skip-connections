@@ -1,6 +1,8 @@
 """Aggregate the fixed 512-trial experiment and render its paper tables."""
 
 import csv
+import hashlib
+import json
 import math
 import statistics
 from pathlib import Path
@@ -10,10 +12,17 @@ ROOT = Path(__file__).resolve().parent
 RESULTS = ROOT / "results"
 TRIALS_PATH = RESULTS / "trials.csv"
 SUMMARY_PATH = RESULTS / "summary.csv"
-FITS_PATH = RESULTS / "fits.tex"
-METRICS_PATH = RESULTS / "metrics.tex"
+METRICS_PATH = ROOT.parent / "paper" / "source" / "tables" / "experiments.tex"
+MANIFEST_PATH = RESULTS / "manifest.json"
 
-SETTINGS = ((3, 3, 2), (3, 3, 800), (5, 10, 2), (5, 10, 800))
+SETTINGS = (
+    (3, 3, 2, "planar"),
+    (3, 3, 800, "random"),
+    (3, 3, 800, "embedded"),
+    (5, 10, 2, "planar"),
+    (5, 10, 800, "random"),
+    (5, 10, 800, "embedded"),
+)
 MODELS = ("plain", "joint_skip", "profiled_skip")
 MODEL_LABELS = {
     "plain": "Plain",
@@ -23,12 +32,12 @@ MODEL_LABELS = {
 TRIAL_COUNT = 512
 FIT_THRESHOLD = 1e-10
 INPUT_FIELDS = (
-    "m", "n", "d", "trial", "model", "fit", "relative_loss",
+    "m", "n", "d", "teacher_geometry", "trial", "model", "fit", "relative_loss",
     "closest_teacher_swaps", "angular_distance_radians_per_unit",
     "latent_teacher_hash", "input_hash", "optimizer_success", "optimizer_message",
 )
 SUMMARY_FIELDS = (
-    "m", "n", "d", "model", "trials", "fits",
+    "m", "n", "d", "teacher_geometry", "model", "trials", "fits",
     "closest_teacher_swaps_median",
     "angular_distance_radians_per_unit_median",
 )
@@ -43,8 +52,8 @@ def _read_and_validate():
     input_hashes = {}
     teacher_hashes = {}
     expected = {
-        (m, n, d, trial, model)
-        for m, n, d in SETTINGS
+        (m, n, d, geometry, trial, model)
+        for m, n, d, geometry in SETTINGS
         for trial in range(TRIAL_COUNT)
         for model in MODELS
     }
@@ -63,8 +72,9 @@ def _read_and_validate():
                 if None in row or any(value is None for value in row.values()):
                     _fail(f"line {line}: row has missing fields or extra columns")
                 m, n, d, trial = (int(row[name]) for name in ("m", "n", "d", "trial"))
+                geometry = row["teacher_geometry"]
                 model = row["model"]
-                key = (m, n, d, trial, model)
+                key = (m, n, d, geometry, trial, model)
                 if key not in expected:
                     _fail(f"line {line}: unexpected experiment key {key!r}")
                 if key in records:
@@ -92,16 +102,17 @@ def _read_and_validate():
                 if (len(input_hash) != 64 or len(teacher_hash) != 64
                         or any(c not in "0123456789abcdefABCDEF" for c in input_hash + teacher_hash)):
                     _fail(f"line {line}: hashes must be 64-character hexadecimal strings")
-                input_key = (m, n, d, trial)
+                input_key = (m, n, d, geometry, trial)
                 prior_input = input_hashes.setdefault(input_key, input_hash)
                 if prior_input != input_hash:
                     _fail(f"line {line}: input_hash differs between model arms for {input_key!r}")
-                # The same latent teacher realization is reused across ambient
-                # dimensions for each (m,n,trial) setting.
-                teacher_key = (m, n, trial)
-                prior_teacher = teacher_hashes.setdefault(teacher_key, teacher_hash)
-                if prior_teacher != teacher_hash:
-                    _fail(f"line {line}: latent_teacher_hash differs across dimensions for {teacher_key!r}")
+                # Planar (d=2) and embedded (d=800) are paired across ambient
+                # dimensions. Random teachers have their own draw and are excluded.
+                if geometry in ("planar", "embedded"):
+                    teacher_key = (m, n, trial)
+                    prior_teacher = teacher_hashes.setdefault(teacher_key, teacher_hash)
+                    if prior_teacher != teacher_hash:
+                        _fail(f"line {line}: latent_teacher_hash differs across dimensions for {teacher_key!r}")
 
                 records[key] = {
                     "fit": fit,
@@ -125,13 +136,14 @@ def _read_and_validate():
 
 def _summary_rows(records):
     rows = []
-    for m, n, d in SETTINGS:
+    for m, n, d, geometry in SETTINGS:
         for model in MODELS:
-            cells = [records[(m, n, d, trial, model)] for trial in range(TRIAL_COUNT)]
+            cells = [records[(m, n, d, geometry, trial, model)] for trial in range(TRIAL_COUNT)]
             rows.append({
                 "m": m,
                 "n": n,
                 "d": d,
+                "teacher_geometry": geometry,
                 "model": model,
                 "trials": TRIAL_COUNT,
                 "fits": sum(item["fit"] for item in cells),
@@ -141,36 +153,33 @@ def _summary_rows(records):
     return rows
 
 
-def _latex_fits(rows):
-    by_key = {(row["m"], row["n"], row["d"], row["model"]): row for row in rows}
-    lines = [
-        f"% Generated from trials.csv; fit counts use all {TRIAL_COUNT} trials per model.",
-        r"\begin{tabular}{rrr rrr}",
-        r"\toprule",
-        r"$m$ & $n$ & $d$ & Plain & Joint skip & Profiled skip \\",
-        r"\midrule",
-    ]
-    for m, n, d in SETTINGS:
-        vals = [by_key[(m, n, d, model)]["fits"] for model in MODELS]
-        lines.append(f"{m} & {n} & {d} & " + " & ".join(f"{v}/{TRIAL_COUNT}" for v in vals) + r" \\")
-    lines.extend([r"\bottomrule", r"\end{tabular}", ""])
-    return "\n".join(lines)
-
-
 def _latex_metrics(rows):
+    by_key = {(row["m"], row["n"], row["d"], row["teacher_geometry"], row["model"]): row for row in rows}
     lines = [
         f"% Generated from trials.csv; medians use all {TRIAL_COUNT} trials per model, including misses.",
-        r"\begin{tabular}{rrr l r r r}",
+        r"\begin{tabular}{cc l r r r}",
         r"\toprule",
-        r"$m$ & $n$ & $d$ & Model & Fits & \shortstack{Teacher\\switches} & \shortstack{Angular travel\\(rad/unit)} \\",
+        r"$(m,n)$ & $d$ & Model & Fits & \shortstack{Closest-teacher\\switches} & \shortstack{Angular travel\\(rad/student unit)} \\",
         r"\midrule",
     ]
-    for row in rows:
-        lines.append(
-            f"{row['m']} & {row['n']} & {row['d']} & {MODEL_LABELS[row['model']]} & "
-            f"{row['fits']}/{TRIAL_COUNT} & {row['closest_teacher_swaps_median']:g} & "
-            f"{row['angular_distance_radians_per_unit_median']:.2f} " + r"\\"
-        )
+    groups = ((3, 3), (5, 10))
+    for group_index, (m, n) in enumerate(groups):
+        if group_index:
+            lines.append(r"\midrule")
+        conditions = ((2, "planar", r"$2$"), (800, "random", r"$800$"),
+                      (800, "embedded", r"$800,\mathrm{emb}$"))
+        for condition_index, (d, geometry, condition_label) in enumerate(conditions):
+            if condition_index:
+                lines.append(r"\cmidrule(lr){2-6}")
+            for model_index, model in enumerate(MODELS):
+                row = by_key[(m, n, d, geometry, model)]
+                mn_cell = rf"\multirow{{9}}{{*}}{{$({m},{n})$}}" if condition_index == 0 and model_index == 0 else ""
+                d_cell = rf"\multirow{{3}}{{*}}{{{condition_label}}}" if model_index == 0 else ""
+                lines.append(
+                    f"{mn_cell} & {d_cell} & {MODEL_LABELS[model]} & "
+                    f"{row['fits']}/{TRIAL_COUNT} & {row['closest_teacher_swaps_median']:g} & "
+                    f"{row['angular_distance_radians_per_unit_median']:.2f} " + r"\\"
+                )
     lines.extend([r"\bottomrule", r"\end{tabular}", ""])
     return "\n".join(lines)
 
@@ -184,8 +193,13 @@ def main() -> None:
         writer = csv.DictWriter(stream, fieldnames=SUMMARY_FIELDS)
         writer.writeheader()
         writer.writerows(rows)
-    FITS_PATH.write_text(_latex_fits(rows), encoding="utf-8")
+    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     METRICS_PATH.write_text(_latex_metrics(rows), encoding="utf-8")
+    if MANIFEST_PATH.exists():
+        manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+        manifest["table_source_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        manifest["table_input_csv_sha256"] = hashlib.sha256(TRIALS_PATH.read_bytes()).hexdigest()
+        MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

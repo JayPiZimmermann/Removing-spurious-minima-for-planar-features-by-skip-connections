@@ -2,28 +2,34 @@
 
 Install and run using the four commands in the repository README. There are no
 experiment options. `run.py` trains every model; `tables.py` validates the trial
-CSV and regenerates both tables without retraining.
+CSV and regenerates the grouped table without retraining.
 
-The experiment has 512 paired trials for each of `(m,n,d) = (3,3,2), (3,3,800),
-(5,10,2), (5,10,800)`, where `m` is teacher width and `n` is student width.
-Every trial trains plain ReLU, joint skip, and profiled skip: 6,144 model runs in total.
+The experiment uses teacher/student widths `(m,n) = (3,3)` and `(5,10)`.
+For each width pair, 512 paired trials use each of three teacher conditions:
+random directions in `d=2`, random directions in `d=800`, and the same planar
+teachers from `d=2` embedded into `d=800` (labelled `800, emb`). Every trial
+trains plain ReLU, joint skip, and profiled skip: 9,216 model runs in total.
 
 ## Sampling and objectives
 
 The seed is `202611080064`. Independent NumPy PCG64 streams use
 `SeedSequence([seed, m, trial, stream, d, n])`, with trials numbered 0--511.
-Teacher streams use zero for `d,n`; the embedding stream uses zero for `n`.
-Streams 1--5 respectively generate teacher directions, teacher masses,
-the embedding, student directions, and student masses.
+Streams 1--5 respectively generate planar teacher directions, teacher masses,
+the embedding, student directions, and student masses. The first two use
+zero for `d,n`; the embedding stream uses zero for `n`. Stream 6 generates
+the fully random teacher directions with `d=800,n=0`.
 
-Teacher directions are independent normalized Gaussian vectors in two
-dimensions; their masses are independent Uniform(0.5,1.5). Each teacher is
-shared across dimensions. In dimension 800 it is embedded through the thin QR
-factor of an independent 800-by-2 Gaussian matrix, so it remains planar.
+Planar teacher directions are independent normalized Gaussian vectors in two
+dimensions. The embedded condition maps the same directions into dimension
+800 through the thin QR factor of an independent 800-by-2 Gaussian matrix.
+The fully random condition instead draws normalized independent Gaussian
+directions directly in dimension 800, giving teacher rank `m` almost surely.
+Teacher masses are independent Uniform(0.5,1.5), shared across conditions.
 Student directions are normalized independent Gaussian vectors in the full
 ambient dimension. Student masses are independent Uniform(0.5,1.5), multiplied
 by total teacher mass divided by student width. Student initializations are
 independent across dimensions and shared exactly across the three models.
+Both dimension-800 teacher conditions also share student initializations.
 There is no geometry-based rejection or trial selection.
 
 With Gaussian inputs, all objectives are exact population half-squared losses:
@@ -53,7 +59,7 @@ including the initial state:
 - **Closest-teacher switches:** sum over students of changes in the index
   maximizing the oriented dot product with a teacher direction. Exact ties use
   the first index; there is no tie margin or small-movement filter.
-- **Angular travel per unit:** cumulative spherical distance between successive
+- **Angular travel per student unit:** cumulative spherical distance between successive
   student directions, averaged over units, in radians. This uses oriented
   directions for all three models, even though the centered objective is
   invariant under direction sign changes.
@@ -63,13 +69,19 @@ the recorded paths and are not measures of runtime or convergence guarantees.
 
 ## Outputs and reproducibility
 
-`results/trials.csv` stores all 6,144 outcomes, the two trajectory quantities,
+`results/trials.csv` stores all 9,216 outcomes, the two trajectory quantities,
 losses used for fitting, pairing hashes, and optimizer termination metadata.
-`results/summary.csv` contains the 12 model/setting summaries. `results/fits.tex`
-is the compact four-row fitting table; `results/metrics.tex` is the complete
-12-row table. Both are `tabular` fragments requiring LaTeX's `booktabs` package.
-`results/manifest.json` records anonymous software versions and source/data
-SHA-256 hashes. No machine names, local paths, or personal identifiers are saved.
+`results/summary.csv` contains the 18 model/condition summaries. The generator
+writes `paper/source/tables/experiments.tex` directly, grouping rows by `(m,n)`,
+then `2`, `800`, `800, emb`, and model. This `tabular` fragment requires
+LaTeX's `booktabs` and `multirow` packages; captions and explanatory text
+belong to `paper/source/main.tex`.
+`results/manifest.json` records anonymous software versions and training-time
+source/data SHA-256 hashes. Table generation separately records its current
+source and input CSV hashes, so presentation changes retain the training
+provenance. Separate training batches are recorded when previously completed
+conditions are retained. No machine names, local paths, or personal identifiers
+are saved.
 
 The reference environment uses Python 3.11.13, NumPy 2.4.6, and SciPy 1.17.1 on
 Linux x86-64. Sampling is independent of scheduling and worker count. Exact

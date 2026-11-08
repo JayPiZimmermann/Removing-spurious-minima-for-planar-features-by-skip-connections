@@ -1,7 +1,7 @@
 {
   "seed": 202611080064,
   "trials_per_setting": 512,
-  "model_runs": 6144,
+  "model_runs": 9216,
   "python": "3.11.13",
   "numpy": "2.4.6",
   "scipy": "1.17.1",
@@ -23,10 +23,39 @@
   ],
   "fit_relative_tolerance": 1e-10,
   "source_sha256": {
-    "run.py": "7607cf99a49f7cd0617249a73d70c33f5d89b6c434699ed63683eb89fedf2f05",
+    "run.py": "a4d83848272f51570c3dcd83f3a6b53e31f736334606d518b8cb9e9dec8a3240",
     "population.py": "d4767ec04b03401034bb83567e803be0296b0eed4ea73ed78adc83acca88807a",
-    "tables.py": "a61c9a1d87d61eb0bcfa189ce8230d7cb1243c1d6b504aed7bf0d165f96d681a",
+    "tables.py": "01894f28649b88a32564c06f49eb6c0ac69af8b738ed9f29b4ded3f75918b219",
     "requirements.txt": "6afb83d59515deb526c4879fe45c151289c53c8b2bd6c073dfcd3702132e51ac"
   },
-  "trials_csv_sha256": "4985c895a7d0260f18662cef246ab5c0201fbce69cc12b3f6081742f2a58bc38"
+  "trials_csv_sha256": "ec33ff23964968a570ae21d94b2df7708956a2174f32f3a808449208096580b5",
+  "teacher_geometries": [
+    "planar",
+    "random",
+    "embedded"
+  ],
+  "training_batches": [
+    {
+      "model_runs": 6144,
+      "source_sha256": {
+        "run.py": "7607cf99a49f7cd0617249a73d70c33f5d89b6c434699ed63683eb89fedf2f05",
+        "population.py": "d4767ec04b03401034bb83567e803be0296b0eed4ea73ed78adc83acca88807a",
+        "tables.py": "a61c9a1d87d61eb0bcfa189ce8230d7cb1243c1d6b504aed7bf0d165f96d681a",
+        "requirements.txt": "6afb83d59515deb526c4879fe45c151289c53c8b2bd6c073dfcd3702132e51ac"
+      },
+      "trials_csv_sha256": "4985c895a7d0260f18662cef246ab5c0201fbce69cc12b3f6081742f2a58bc38"
+    },
+    {
+      "model_runs": 3072,
+      "source_sha256": {
+        "run.py": "a4d83848272f51570c3dcd83f3a6b53e31f736334606d518b8cb9e9dec8a3240",
+        "population.py": "d4767ec04b03401034bb83567e803be0296b0eed4ea73ed78adc83acca88807a",
+        "tables.py": "01894f28649b88a32564c06f49eb6c0ac69af8b738ed9f29b4ded3f75918b219",
+        "requirements.txt": "6afb83d59515deb526c4879fe45c151289c53c8b2bd6c073dfcd3702132e51ac"
+      }
+    }
+  ],
+  "reused_planar_inputs_verified": true,
+  "table_source_sha256": "01894f28649b88a32564c06f49eb6c0ac69af8b738ed9f29b4ded3f75918b219",
+  "table_input_csv_sha256": "ec33ff23964968a570ae21d94b2df7708956a2174f32f3a808449208096580b5"
 }
