@@ -2,7 +2,7 @@
 
 Install and run using the four commands in the repository README. There are no
 experiment options. `run.py` trains every model; `tables.py` validates the trial
-CSV and regenerates the grouped table without retraining.
+CSV and regenerates the grouped tables without retraining.
 
 The experiment uses teacher/student widths `(m,n) = (3,3)` and `(5,10)`.
 For each width pair, 512 paired trials use each of three teacher conditions:
@@ -72,10 +72,12 @@ the recorded paths and are not measures of runtime or convergence guarantees.
 `results/trials.csv` stores all 9,216 outcomes, the two trajectory quantities,
 losses used for fitting, pairing hashes, and optimizer termination metadata.
 `results/summary.csv` contains the 18 model/condition summaries. The generator
-writes `paper/source/tables/experiments.tex` directly, grouping rows by `(m,n)`,
-then `2`, `800`, `800, emb`, and model. This `tabular` fragment requires
-LaTeX's `booktabs` and `multirow` packages; captions and explanatory text
-belong to `paper/source/main.tex`.
+writes two table bodies directly into `paper/source/tables/`:
+`experiments_main.tex` contains the 12 planar/embedded rows, and
+`experiments_appendix.tex` contains all 18 rows. Both group rows by `(m,n)`,
+then teacher condition and model. They require LaTeX's `booktabs` and
+`multirow` packages; captions and explanatory text belong to
+`paper/source/main.tex`.
 `results/manifest.json` records anonymous software versions and training-time
 source/data SHA-256 hashes. Table generation separately records its current
 source and input CSV hashes, so presentation changes retain the training

@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parent
 RESULTS = ROOT / "results"
 TRIALS_PATH = RESULTS / "trials.csv"
 SUMMARY_PATH = RESULTS / "summary.csv"
-METRICS_PATH = ROOT.parent / "paper" / "source" / "tables" / "experiments.tex"
+TABLES_DIR = ROOT.parent / "paper" / "source" / "tables"
+MAIN_TABLE_PATH = TABLES_DIR / "experiments_main.tex"
+APPENDIX_TABLE_PATH = TABLES_DIR / "experiments_appendix.tex"
 MANIFEST_PATH = RESULTS / "manifest.json"
 
 SETTINGS = (
@@ -153,7 +155,7 @@ def _summary_rows(records):
     return rows
 
 
-def _latex_metrics(rows):
+def _latex_metrics(rows, conditions):
     by_key = {(row["m"], row["n"], row["d"], row["teacher_geometry"], row["model"]): row for row in rows}
     lines = [
         f"% Generated from trials.csv; medians use all {TRIAL_COUNT} trials per model, including misses.",
@@ -166,14 +168,12 @@ def _latex_metrics(rows):
     for group_index, (m, n) in enumerate(groups):
         if group_index:
             lines.append(r"\midrule")
-        conditions = ((2, "planar", r"$2$"), (800, "random", r"$800$"),
-                      (800, "embedded", r"$800,\mathrm{emb}$"))
         for condition_index, (d, geometry, condition_label) in enumerate(conditions):
             if condition_index:
                 lines.append(r"\cmidrule(lr){2-6}")
             for model_index, model in enumerate(MODELS):
                 row = by_key[(m, n, d, geometry, model)]
-                mn_cell = rf"\multirow{{9}}{{*}}{{$({m},{n})$}}" if condition_index == 0 and model_index == 0 else ""
+                mn_cell = rf"\multirow{{{len(conditions) * len(MODELS)}}}{{*}}{{$({m},{n})$}}" if condition_index == 0 and model_index == 0 else ""
                 d_cell = rf"\multirow{{3}}{{*}}{{{condition_label}}}" if model_index == 0 else ""
                 lines.append(
                     f"{mn_cell} & {d_cell} & {MODEL_LABELS[model]} & "
@@ -193,8 +193,14 @@ def main() -> None:
         writer = csv.DictWriter(stream, fieldnames=SUMMARY_FIELDS)
         writer.writeheader()
         writer.writerows(rows)
-    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    METRICS_PATH.write_text(_latex_metrics(rows), encoding="utf-8")
+    TABLES_DIR.mkdir(parents=True, exist_ok=True)
+    main_conditions = ((2, "planar", r"$2$"),
+                       (800, "embedded", r"$800,\mathrm{emb}$"))
+    appendix_conditions = ((2, "planar", r"$2$"),
+                           (800, "random", r"$800$"),
+                           (800, "embedded", r"$800,\mathrm{emb}$"))
+    MAIN_TABLE_PATH.write_text(_latex_metrics(rows, main_conditions), encoding="utf-8")
+    APPENDIX_TABLE_PATH.write_text(_latex_metrics(rows, appendix_conditions), encoding="utf-8")
     if MANIFEST_PATH.exists():
         manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
         manifest["table_source_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
