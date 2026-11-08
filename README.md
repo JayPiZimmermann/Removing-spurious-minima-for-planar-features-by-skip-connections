@@ -2,6 +2,21 @@
 
 This is the official Lean codebase for the ICLR submission 'Removing spurious minima for planar features by skip connections'.
 
+## Reproduce the experiments
+
+From the repository root, with Python 3.11 on Linux x86-64:
+
+```bash
+python3.11 -m venv code/.venv
+code/.venv/bin/pip install -r code/requirements.txt
+code/.venv/bin/python code/run.py
+code/.venv/bin/python code/tables.py
+```
+
+Runs all 512 paired trials per setting with a fixed seed, using up to 16 CPU
+processes. CSV results and the two generated LaTeX tables are in
+[`code/results/`](code/results/); the fixed protocol is in [`code/README.md`](code/README.md).
+
 Start with [Overview_theorems.lean](Overview_theorems.lean): it contains the
 five theorems we declare as our main contribution, with their proofs. All
 project-specific definitions needed to read them are in

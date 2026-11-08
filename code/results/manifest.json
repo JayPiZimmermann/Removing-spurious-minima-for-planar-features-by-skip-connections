@@ -1,0 +1,32 @@
+{
+  "seed": 202611080064,
+  "trials_per_setting": 512,
+  "model_runs": 6144,
+  "python": "3.11.13",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "architecture": "x86_64",
+  "longdouble_precision_bits": 63,
+  "blas_threads": 1,
+  "optimizer": {
+    "method": "L-BFGS-B",
+    "maxiter": 5000,
+    "maxfun": 10000,
+    "maxls": 40,
+    "maxcor": 20,
+    "ftol": 0.0,
+    "gtol": 1e-10
+  },
+  "log_mass_bounds": [
+    -30.0,
+    30.0
+  ],
+  "fit_relative_tolerance": 1e-10,
+  "source_sha256": {
+    "run.py": "7607cf99a49f7cd0617249a73d70c33f5d89b6c434699ed63683eb89fedf2f05",
+    "population.py": "d4767ec04b03401034bb83567e803be0296b0eed4ea73ed78adc83acca88807a",
+    "tables.py": "a61c9a1d87d61eb0bcfa189ce8230d7cb1243c1d6b504aed7bf0d165f96d681a",
+    "requirements.txt": "6afb83d59515deb526c4879fe45c151289c53c8b2bd6c073dfcd3702132e51ac"
+  },
+  "trials_csv_sha256": "4985c895a7d0260f18662cef246ab5c0201fbce69cc12b3f6081742f2a58bc38"
+}
